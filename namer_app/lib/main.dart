@@ -354,9 +354,9 @@ class _HistoryListViewState extends State<HistoryListView> {
                   pair.asLowerCase,
                   semanticsLabel: pair.asPascalCase,
                 ),
-              ),
-            ),
-          );
+              ), 
+            ),  
+          );   
         },
       ),
     );
