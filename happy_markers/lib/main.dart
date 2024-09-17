@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         // theme of the app
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 10, 79, 11)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 223, 9, 9)),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Markers near you'),

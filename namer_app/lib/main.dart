@@ -111,8 +111,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         label: 'Home',
                       ),
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.favorite),
-                        label: 'Favorites',
+                        icon: Icon(Icons.leaderboard),
+                        label: 'Leaderboard',
                       ),
                     ],
                     currentIndex: selectedIndex,
@@ -137,8 +137,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         label: Text('Home'),
                       ),
                       NavigationRailDestination(
-                        icon: Icon(Icons.favorite),
-                        label: Text('Favorites'),
+                        icon: Icon(Icons.leaderboard),
+                        label: Text('Leaderboard'),
                       ),
                     ],
                     selectedIndex: selectedIndex,
