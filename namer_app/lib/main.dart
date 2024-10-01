@@ -2,7 +2,9 @@
 
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:csv/csv.dart';
 
 // TODO: add a drop-down icon with multiple pages inside
 // icon list: https://api.flutter.dev/flutter/material/Icons-class.html
@@ -68,6 +70,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  //CSV file loading
+  List<List<dynamic>> _data = [];
+
+  void _loadCSV() async {
+    final _rawData = await rootBundle.loadString("assets/mycsv.csv");
+    List<List<dynamic>> _listData =
+        const CsvToListConverter().convert(_rawData);
+    setState(() {
+      _data = _listData;
+    });
+  }
+
   var selectedIndex = 0;
 
   @override
