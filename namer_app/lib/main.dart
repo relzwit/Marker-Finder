@@ -70,18 +70,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  //CSV file loading
-  List<List<dynamic>> _data = [];
-
-  void _loadCSV() async {
-    final _rawData = await rootBundle.loadString("assets/mycsv.csv");
-    List<List<dynamic>> _listData =
-        const CsvToListConverter().convert(_rawData);
-    setState(() {
-      _data = _listData;
-    });
-  }
-
   var selectedIndex = 0;
 
   @override
