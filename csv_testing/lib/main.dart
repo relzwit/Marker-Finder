@@ -107,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
     for (var i = 0; i < 10; i++) {
       Text('Item $i');
     }
-    _loadCSV();
+    //_loadCSV();
 
     // LOCATION COMPARISON BELOW
 
