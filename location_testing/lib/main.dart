@@ -21,7 +21,7 @@ Future<Position> _determinePosition() async {
   serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
     // Location services are not enabled don't continue
-    // accessing the position and request users of the 
+    // accessing the position and request users of the
     // App to enable the location services.
     return Future.error('Location services are disabled.');
   }
@@ -32,18 +32,18 @@ Future<Position> _determinePosition() async {
     if (permission == LocationPermission.denied) {
       // Permissions are denied, next time you could try
       // requesting permissions again (this is also where
-      // Android's shouldShowRequestPermissionRationale 
+      // Android's shouldShowRequestPermissionRationale
       // returned true. According to Android guidelines
       // your App should show an explanatory UI now.
       return Future.error('Location permissions are denied');
     }
   }
-  
+
   if (permission == LocationPermission.deniedForever) {
-    // Permissions are denied forever, handle appropriately. 
+    // Permissions are denied forever, handle appropriately.
     return Future.error(
-      'Location permissions are permanently denied, we cannot request permissions.');
-  } 
+        'Location permissions are permanently denied, we cannot request permissions.');
+  }
 
   // When we reach here, permissions are granted and we can
   // continue accessing the position of the device.
@@ -67,7 +67,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -89,7 +88,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<List<dynamic>> _data = [];
   List<List<dynamic>> _closeLocations = [];
-
 
   //  haversine stuff to compare two sets of coords
   static final R = 6372.8; // In kilometers
@@ -149,12 +147,6 @@ class _MyHomePageState extends State<MyHomePage> {
         _closeLocations.add(element); // cause of error here?
         // int temp = _closeLocations.length;
         // print("$temp items in _closeLocations");
-      }
-
-      dynamic temp1 = [];
-
-      if (_closeLocations.length > 0) {
-        temp1 = _closeLocations.last;
       }
       //print("$temp items in _closeLocations \n $temp1 is last elem");
     }

@@ -4,7 +4,7 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:csv/csv.dart';
+//import 'package:csv/csv.dart';
 
 // TODO: add a drop-down icon with multiple pages inside
 // icon list: https://api.flutter.dev/flutter/material/Icons-class.html

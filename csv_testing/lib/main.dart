@@ -5,13 +5,11 @@ import 'dart:math';
 
 // find a flutter component for a map display
 
-
 // coordinates for SAU: 35.04842984003839, -85.05191851568703
 
 void main() {
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -49,7 +47,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<List<dynamic>> _data = []; 
+  List<List<dynamic>> _data = [];
   List<List<dynamic>> _closeLocations = [];
 
   static final R = 6372.8; // In kilometers
@@ -108,12 +106,6 @@ class _MyHomePageState extends State<MyHomePage> {
         _closeLocations.add(element); // cause of error here?
         // int temp = _closeLocations.length;
         // print("$temp items in _closeLocations");
-      }
-
-      dynamic temp1 = [];
-
-      if (_closeLocations.length > 0) {
-        temp1 = _closeLocations.last;
       }
       //print("$temp items in _closeLocations \n $temp1 is last elem");
     }
