@@ -10,44 +10,6 @@ import 'package:geolocator/geolocator.dart';
 
 void main() {
   runApp(const MyApp());
-  _determinePosition();
-}
-
-Future<Position> _determinePosition() async {
-  bool serviceEnabled;
-  LocationPermission permission;
-
-  // Test if location services are enabled.
-  serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  if (!serviceEnabled) {
-    // Location services are not enabled don't continue
-    // accessing the position and request users of the
-    // App to enable the location services.
-    return Future.error('Location services are disabled.');
-  }
-
-  permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) {
-      // Permissions are denied, next time you could try
-      // requesting permissions again (this is also where
-      // Android's shouldShowRequestPermissionRationale
-      // returned true. According to Android guidelines
-      // your App should show an explanatory UI now.
-      return Future.error('Location permissions are denied');
-    }
-  }
-
-  if (permission == LocationPermission.deniedForever) {
-    // Permissions are denied forever, handle appropriately.
-    return Future.error(
-        'Location permissions are permanently denied, we cannot request permissions.');
-  }
-
-  // When we reach here, permissions are granted and we can
-  // continue accessing the position of the device.
-  return await Geolocator.getCurrentPosition();
 }
 
 class MyApp extends StatelessWidget {
@@ -89,6 +51,54 @@ class _MyHomePageState extends State<MyHomePage> {
   List<List<dynamic>> _data = [];
   List<List<dynamic>> _closeLocations = [];
 
+  Position? _position;
+
+  void _getCurrentLocation() async {
+    Position position = await _determinePosition();
+    setState(() {
+      _position = position;
+    });
+  }
+
+  // there is some platform specific stuff to pay attention to
+  // if i ever deploy to mobile devices: https://pub.dev/packages/geolocator
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    return await Geolocator.getCurrentPosition();
+  }
+
   //  haversine stuff to compare two sets of coords
   static final R = 6372.8; // In kilometers
 
@@ -109,6 +119,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   //  code to load the info from the CSV file into a list
   void _loadCSV() async {
+    // if (_closeLocations.isEmpty) {
+    //   _getCurrentLocation();
+    // }
     final _rawData = await rootBundle.loadString("assets/hmdb.csv");
     List<List<dynamic>> _listData =
         const CsvToListConverter().convert(_rawData);
@@ -124,7 +137,11 @@ class _MyHomePageState extends State<MyHomePage> {
     for (var i = 0; i < 10; i++) {
       Text('Item $i');
     }
-    //_loadCSV();
+
+    // asks for location access when the app launches
+    if (_closeLocations.isEmpty) {
+      _getCurrentLocation();
+    }
 
     // LOCATION COMPARISON BELOW
 
@@ -135,21 +152,39 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // these are the coords for SAU
     // in the app they would be the current coords of the user
-    double my_lat = 35.04842984003839;
-    double my_lon = -85.05191851568703;
 
-    for (var element in _data) {
-      double lon_2 = element[8];
-      double lat_2 = element[7];
-      double acceptable_dist = 30.1; // distance in Kilometers
-      // need to catch the error if there is nothing within the selected distance
-      if (haversine(my_lat, my_lon, lat_2, lon_2) < acceptable_dist) {
-        _closeLocations.add(element); // cause of error here?
-        // int temp = _closeLocations.length;
-        // print("$temp items in _closeLocations");
+    // double my_lat = 35.04842984003839;
+    // double my_lon = -85.05191851568703;
+
+    if (_position != null) {
+      dynamic my_lat = _position?.latitude;
+      dynamic my_lon = _position?.longitude;
+
+      for (var element in _data) {
+        double lon_2 = element[8];
+        double lat_2 = element[7];
+        double acceptable_dist = 30.1;
+        // distance in Kilometers
+        // need to catch the error if there is
+        // nothing within the selected distance
+        if (haversine(my_lat, my_lon, lat_2, lon_2) < acceptable_dist) {
+          _closeLocations.add(element);
+        }
       }
-      //print("$temp items in _closeLocations \n $temp1 is last elem");
     }
+
+    // for (var element in _data) {
+    //   double lon_2 = element[8];
+    //   double lat_2 = element[7];
+    //   double acceptable_dist = 30.1; // distance in Kilometers
+    //   // need to catch the error if there is nothing within the selected distance
+    //   if (haversine(my_lat, my_lon, lat_2, lon_2) < acceptable_dist) {
+    //     _closeLocations.add(element); // cause of error here?
+    //     // int temp = _closeLocations.length;
+    //     // print("$temp items in _closeLocations");
+    //   }
+    //   //print("$temp items in _closeLocations \n $temp1 is last elem");
+    // }
     int temp = _closeLocations.length;
     print("$temp items in _closeLocations");
 
@@ -164,7 +199,10 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        // title: Text(widget.title),
+        title: _position != null
+            ? Text('Current location: ' + _position.toString())
+            : Text('no location data'),
       ),
       body: ListView.builder(
         itemCount: _closeLocations.length,

@@ -30,6 +30,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  #might need the old dependency for web?
+  #geolocator: ^6.2.0
   geolocator: ^13.0.1
   geocoding: ^3.0.0
 
