@@ -6,10 +6,11 @@ import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'dart:math';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:interactive_maps_marker/interactive_maps_marker.dart';
 
 // find a flutter component for a map display
 
-// coordinates for SAU: 35.04842984003839, -85.05191851568703
+// TODO: add default coords so no red screen
 
 void main() {
   runApp(const MyApp());
@@ -144,6 +145,8 @@ class _MyHomePageState extends State<MyHomePage> {
     double? my_lat;
     double? my_lon;
 
+    List<Marker> markers = [];
+
     // asks for location access when the app launches
     if (_closeLocations.isEmpty) {
       _getCurrentLocation();
@@ -210,6 +213,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 userAgentPackageName: 'com.example.app',
               ),
               CurrentLocationLayer(),
+              InteractiveMapsMarker(
+                items: [
+                  //hickman
+                  //35.04610831029419, -85.05297770227583
+                  MarkerItem(
+                      id: 1,
+                      latitude: 35.04610831029419,
+                      longitude: -85.05297770227583)
+                ],
+              )
             ],
           ),
         ],
@@ -240,46 +253,46 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class LocationPage extends StatefulWidget {
-  const LocationPage({super.key, required this.title});
+// class LocationPage extends StatefulWidget {
+//   const LocationPage({super.key, required this.title});
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
+//   // This widget is the home page of your application. It is stateful, meaning
+//   // that it has a State object (defined below) that contains fields that affect
+//   // how it looks.
 
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+//   // This class is the configuration for the state. It holds the values (in this
+//   // case the title) provided by the parent (in this case the App widget) and
+//   // used by the build method of the State. Fields in a Widget subclass are
+//   // always marked "final".
 
-  final String title;
+//   final String title;
 
-  @override
-  State<LocationPage> createState() => _LocationPageState();
-}
+//   @override
+//   State<LocationPage> createState() => _LocationPageState();
+// }
 
-class _LocationPageState extends State<LocationPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Location Page")),
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('LAT: '),
-              const Text('LNG: '),
-              const Text('ADDRESS: '),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: () {},
-                child: const Text("Get Current Location"),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+// class _LocationPageState extends State<LocationPage> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: const Text("Location Page")),
+//       body: SafeArea(
+//         child: Center(
+//           child: Column(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               const Text('LAT: '),
+//               const Text('LNG: '),
+//               const Text('ADDRESS: '),
+//               const SizedBox(height: 32),
+//               ElevatedButton(
+//                 onPressed: () {},
+//                 child: const Text("Get Current Location"),
+//               )
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }

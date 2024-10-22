@@ -38,6 +38,7 @@ dependencies:
   flutter_map_cancellable_tile_provider: ^3.0.2
   latlong2: ^0.9.1
   flutter_map_location_marker: any
+  interactive_maps_marker: ^0.0.2
   
 
 
