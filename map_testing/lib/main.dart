@@ -1,12 +1,13 @@
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'dart:math';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:interactive_maps_marker/interactive_maps_marker.dart';
+//import 'package:interactive_maps_marker/interactive_maps_marker.dart';
 
 // find a flutter component for a map display
 
@@ -142,8 +143,9 @@ class _MyHomePageState extends State<MyHomePage> {
       Text('Item $i');
     }
 
-    double? my_lat;
-    double? my_lon;
+  
+    double? my_lat = 30;
+    double? my_lon = 40;
 
     List<Marker> markers = [];
 
@@ -213,14 +215,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 userAgentPackageName: 'com.example.app',
               ),
               CurrentLocationLayer(),
-              InteractiveMapsMarker(
-                items: [
-                  //hickman
-                  //35.04610831029419, -85.05297770227583
-                  MarkerItem(
-                      id: 1,
-                      latitude: 35.04610831029419,
-                      longitude: -85.05297770227583)
+              MarkerLayer(
+                markers: [
+                  Marker(
+                      // hickman coords
+                      // 35.04614904475529, -85.05275917473938
+                    point: LatLng(35.04614904475529, -85.05275917473938),
+                    width: 80,
+                    height: 80,
+                    child: FlutterLogo(),
+                  )
                 ],
               )
             ],
