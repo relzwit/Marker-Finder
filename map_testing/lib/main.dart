@@ -11,7 +11,8 @@ import 'package:latlong2/latlong.dart';
 
 // find a flutter component for a map display
 
-// TODO: add default coords so no red screen
+// TODO: call location display after coords are gotten, may not be an issue if map is
+//        not the first page displayed
 
 void main() {
   runApp(const MyApp());
@@ -143,11 +144,10 @@ class _MyHomePageState extends State<MyHomePage> {
       Text('Item $i');
     }
 
-  
-    double? my_lat = 30;
+    double? my_lat = 50;
     double? my_lon = 40;
 
-    List<Marker> markers = [];
+    // List<Marker> markers = [];
 
     // asks for location access when the app launches
     if (_closeLocations.isEmpty) {
@@ -167,24 +167,38 @@ class _MyHomePageState extends State<MyHomePage> {
     // double my_lat = 35.04842984003839;
     // double my_lon = -85.05191851568703;
 
-    if (_position != null) {
-      my_lat = _position?.latitude;
-      my_lon = _position?.longitude;
+    // if (_position != null) {
+    my_lat = _position?.latitude;
+    my_lon = _position?.longitude;
 
-      for (var element in _data) {
-        double lon_2 = element[8];
-        double lat_2 = element[7];
-        double acceptable_dist = 30.1;
-        // distance in Kilometers
-        // need to catch the error if there is
-        // nothing within the selected distance
-        if (haversine(my_lat!, my_lon!, lat_2, lon_2) < acceptable_dist) {
-          _closeLocations.add(element);
-        }
+    for (var element in _data) {
+      double lon_2 = element[8];
+      double lat_2 = element[7];
+      double acceptable_dist = 30.1;
+      // distance in Kilometers
+      // need to catch the error if there is
+      // nothing within the selected distance
+      if (haversine(my_lat!, my_lon!, lat_2, lon_2) < acceptable_dist) {
+        _closeLocations.add(element);
       }
     }
-    int temp = _closeLocations.length;
-    print("$temp items in _closeLocations");
+
+    final List<Marker> _markers = [
+      // need to fill this list with the correct markers
+      const LatLng(44.421, 10.404),
+      const LatLng(45.683, 10.839),
+      const LatLng(45.246, 5.783),
+    ]
+        .map(
+          (markerPosition) => Marker(
+            point: markerPosition,
+            width: 40,
+            height: 40,
+            alignment: Alignment.topCenter,
+            child: const Icon(Icons.location_on, size: 40),
+          ),
+        )
+        .toList();
 
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
@@ -216,17 +230,20 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               CurrentLocationLayer(),
               MarkerLayer(
-                markers: [
-                  Marker(
-                      // hickman coords
-                      // 35.04614904475529, -85.05275917473938
-                    point: LatLng(35.04614904475529, -85.05275917473938),
-                    width: 80,
-                    height: 80,
-                    child: FlutterLogo(),
-                  )
-                ],
+                markers: _markers,
               )
+              // MarkerLayer(
+              //   markers: [
+              //     Marker(
+              //       // hickman coords
+              //       // 35.04614904475529, -85.05275917473938
+              //       point: LatLng(35.04614904475529, -85.05275917473938),
+              //       width: 80,
+              //       height: 80,
+              //       child: FlutterLogo(),
+              //     )
+              //   ],
+              // )
             ],
           ),
         ],
