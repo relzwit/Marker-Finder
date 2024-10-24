@@ -156,38 +156,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // LOCATION COMPARISON BELOW
 
-    // TODO: write a function to take lat/lon from
-    // csv and send it to the haversine calculation
-
-    // also write a function that take two coords and compares
-
-    // these are the coords for SAU
-    // in the app they would be the current coords of the user
-
-    // double my_lat = 35.04842984003839;
-    // double my_lon = -85.05191851568703;
-
-    // if (_position != null) {
-    my_lat = _position?.latitude;
-    my_lon = _position?.longitude;
-
-    for (var element in _data) {
-      double lon_2 = element[8];
-      double lat_2 = element[7];
-      double acceptable_dist = 30.1;
-      // distance in Kilometers
-      // need to catch the error if there is
-      // nothing within the selected distance
-      if (haversine(my_lat!, my_lon!, lat_2, lon_2) < acceptable_dist) {
-        _closeLocations.add(element);
-      }
-    }
-
     final List<Marker> _markers = [
       // need to fill this list with the correct markers
       const LatLng(44.421, 10.404),
       const LatLng(45.683, 10.839),
       const LatLng(45.246, 5.783),
+      const LatLng(50, -7),
+      const LatLng(35.04618417910119, -85.0527162593959)
     ]
         .map(
           (markerPosition) => Marker(
@@ -200,6 +175,29 @@ class _MyHomePageState extends State<MyHomePage> {
         )
         .toList();
 
+
+//  testing for null ensures that the map launches with a valid initial center
+    if (_position != null) {
+    my_lat = _position?.latitude;
+    my_lon = _position?.longitude;
+
+    for (var element in _data) {
+      double lon_2 = element[8];
+      double lat_2 = element[7];
+      double acceptable_dist = 30.1;
+      // distance in Kilometers
+      // need to catch the error if there is
+      // nothing within the selected distance
+      if (haversine(my_lat!, my_lon!, lat_2, lon_2) < acceptable_dist) {
+        _closeLocations.add(element);
+        // here i need to add the coordinate of current element to the marker list
+      }
+    }
+    }
+
+    for(var i = 0; i < _closeLocations.length; i++){
+      print(_closeLocations[i]);
+    }
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
