@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'dart:math';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -156,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // LOCATION COMPARISON BELOW
 
-    final List<Marker> _markers = [
+    List<Marker> _markers = [
       // need to fill this list with the correct markers
       const LatLng(44.421, 10.404),
       const LatLng(45.683, 10.839),
@@ -175,27 +176,26 @@ class _MyHomePageState extends State<MyHomePage> {
         )
         .toList();
 
-
 //  testing for null ensures that the map launches with a valid initial center
     if (_position != null) {
-    my_lat = _position?.latitude;
-    my_lon = _position?.longitude;
+      my_lat = _position?.latitude;
+      my_lon = _position?.longitude;
 
-    for (var element in _data) {
-      double lon_2 = element[8];
-      double lat_2 = element[7];
-      double acceptable_dist = 30.1;
-      // distance in Kilometers
-      // need to catch the error if there is
-      // nothing within the selected distance
-      if (haversine(my_lat!, my_lon!, lat_2, lon_2) < acceptable_dist) {
-        _closeLocations.add(element);
-        // here i need to add the coordinate of current element to the marker list
+      for (var element in _data) {
+        double lon_2 = element[8];
+        double lat_2 = element[7];
+        double acceptable_dist = 30.1;
+        // distance in Kilometers
+        // need to catch the error if there is
+        // nothing within the selected distance
+        if (haversine(my_lat!, my_lon!, lat_2, lon_2) < acceptable_dist) {
+          _closeLocations.add(element);
+          // here i need to add the coordinate of current element to the marker list
+        }
       }
     }
-    }
 
-    for(var i = 0; i < _closeLocations.length; i++){
+    for (var i = 0; i < _closeLocations.length; i++) {
       print(_closeLocations[i]);
     }
     // This method is rerun every time setState is called, for instance as done
@@ -217,19 +217,47 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Stack(
         children: [
           FlutterMap(
+            // mapController: ,
             options: MapOptions(
               initialCenter: LatLng(my_lat!, my_lon!),
+              // initialCenter: LatLng(_position!.latitude, _position!.longitude),
               initialZoom: 12,
             ),
             children: [
               TileLayer(
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.example.app',
+                // this would allow us to center after map is rendered
+                errorImage: AssetImage('local.jpg'),
+              ),
+              MarkerClusterLayerWidget(
+                options: MarkerClusterLayerOptions(
+                  maxClusterRadius: 45,
+                  size: const Size(40, 40),
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(50),
+                  maxZoom: 15,
+                  markers: _markers,
+                  builder: (context, markers) {
+                    return Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.blue),
+                      child: Center(
+                        child: Text(
+                          markers.length.toString(),
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
               CurrentLocationLayer(),
+              // markerlayer needs to be the bottom most layer
               MarkerLayer(
                 markers: _markers,
-              )
+              ),
               // MarkerLayer(
               //   markers: [
               //     Marker(
@@ -271,47 +299,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
-// class LocationPage extends StatefulWidget {
-//   const LocationPage({super.key, required this.title});
-
-//   // This widget is the home page of your application. It is stateful, meaning
-//   // that it has a State object (defined below) that contains fields that affect
-//   // how it looks.
-
-//   // This class is the configuration for the state. It holds the values (in this
-//   // case the title) provided by the parent (in this case the App widget) and
-//   // used by the build method of the State. Fields in a Widget subclass are
-//   // always marked "final".
-
-//   final String title;
-
-//   @override
-//   State<LocationPage> createState() => _LocationPageState();
-// }
-
-// class _LocationPageState extends State<LocationPage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: const Text("Location Page")),
-//       body: SafeArea(
-//         child: Center(
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               const Text('LAT: '),
-//               const Text('LNG: '),
-//               const Text('ADDRESS: '),
-//               const SizedBox(height: 32),
-//               ElevatedButton(
-//                 onPressed: () {},
-//                 child: const Text("Get Current Location"),
-//               )
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
