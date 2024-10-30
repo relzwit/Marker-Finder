@@ -40,7 +40,6 @@ class _MapPageState extends State<MapPage> {
   List<List<dynamic>> _data = [];
   List<List<dynamic>> _closeLocations = [];
 
-
   Position? _position;
 
   void _getCurrentLocation() async {
@@ -50,7 +49,7 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
-   Future<Position> _determinePosition() async {
+  Future<Position> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -102,26 +101,23 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _fillCloseLocations() async {
-
     final R = 6372.8; // In kilometers
     double _toRadians(double degree) {
-    return degree * pi / 180;
-  }
+      return degree * pi / 180;
+    }
 
     double haversine(double lat1, lon1, lat2, lon2) {
-    double dLat = _toRadians(lat2 - lat1);
-    double dLon = _toRadians(lon2 - lon1);
-    lat1 = _toRadians(lat1);
-    lat2 = _toRadians(lat2);
-    double a =
-        pow(sin(dLat / 2), 2) + pow(sin(dLon / 2), 2) * cos(lat1) * cos(lat2);
-    double c = 2 * asin(sqrt(a));
-    return R * c;
-  }
+      double dLat = _toRadians(lat2 - lat1);
+      double dLon = _toRadians(lon2 - lon1);
+      lat1 = _toRadians(lat1);
+      lat2 = _toRadians(lat2);
+      double a =
+          pow(sin(dLat / 2), 2) + pow(sin(dLon / 2), 2) * cos(lat1) * cos(lat2);
+      double c = 2 * asin(sqrt(a));
+      return R * c;
+    }
 
-
-
-      //  testing for null ensures that the map launches with a valid initial center
+    //  testing for null ensures that the map launches with a valid initial center
     if (_position != null) {
       double my_lat = _position!.latitude;
       double my_lon = _position!.longitude;
@@ -141,13 +137,10 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-
 // TODO: 1. CREATE A LIST OF MARKER OBJECTS
 //       2. INSIDE THE SCAFFOLD, ITERATE THROUGH THE LIST AND DISPLAY THE COORDS AS MARKERS
 //       3. MODIFY THE MARKER CONSTRUCTOR TO INCLUDE AN ID
 //       4. USE ID TO LINK THE CORRECT IMAGE TO THE POPUP BUILDER
-
-
 
   @override
   Widget build(BuildContext context) {
