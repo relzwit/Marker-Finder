@@ -151,7 +151,18 @@ class _MapPageState extends State<MapPage> {
         // }
         if (haversine(my_lat, my_lon, lat_2, lon_2) > acceptable_dist) {
           _closeLocations.remove(element);
-          // here i need to add the coordinate of current element to the marker list
+          _marker_obj_list.add(
+            MonumentMarker(
+              monument: Monument(
+                name: element[2],
+                imagePath: 'assets/imgs/an_elephant.jpg', // default image
+                lat: element[7],
+                long: element[8],
+                id: element[0],
+                link: element[16],
+              )
+            )
+          );
         }
       }
     }
@@ -163,6 +174,7 @@ class _MapPageState extends State<MapPage> {
 //       2. INSIDE THE SCAFFOLD, ITERATE THROUGH THE LIST AND DISPLAY THE COORDS AS MARKERS
 //       3. MODIFY THE MARKER CONSTRUCTOR TO INCLUDE AN ID
 //       4. USE ID TO LINK THE CORRECT IMAGE TO THE POPUP BUILDER
+//       5. look into error page for fluttermap
 
   @override
   Widget build(BuildContext context) {
@@ -184,35 +196,36 @@ class _MapPageState extends State<MapPage> {
           CurrentLocationLayer(),
           PopupMarkerLayer(
             options: PopupMarkerLayerOptions(
-              markers: <Marker>[
-                MonumentMarker(
-                  monument: Monument(
-                    name: 'Graceland Marker',
-                    imagePath: 'assets/graceland.jpg',
-                    lat: 35.04679,
-                    long: -90.02463,
-                    id: 6,
-                    link: "",
-                  ),
-                ),
-                MonumentMarker(
-                  monument: Monument(
-                    name: 'Casper Mansker',
-                    imagePath: 'assets/casper.jpg',
-                    lat: 36.32083,
-                    long: -86.71333,
-                    id: 5,
-                    link: "",
-                  ),
-                ),
-                const Marker(
-                  alignment: Alignment.topCenter,
-                  point: LatLng(48.859661, 2.305135),
-                  height: Monument.size,
-                  width: Monument.size,
-                  child: Icon(Icons.ad_units),
-                ),
-              ],
+              markers: _marker_obj_list,
+              // markers: <Marker>[
+              //   MonumentMarker(
+              //     monument: Monument(
+              //       name: 'Graceland Marker',
+              //       imagePath: 'assets/imgs/graceland.jpg',
+              //       lat: 35.04679,
+              //       long: -90.02463,
+              //       id: 6,
+              //       link: "",
+              //     ),
+              //   ),
+              //   MonumentMarker(
+              //     monument: Monument(
+              //       name: 'Casper Mansker',
+              //       imagePath: 'assets/imgs/casper.jpg',
+              //       lat: 36.32083,
+              //       long: -86.71333,
+              //       id: 5,
+              //       link: "",
+              //     ),
+              //   ),
+              //   const Marker(
+              //     alignment: Alignment.topCenter,
+              //     point: LatLng(48.859661, 2.305135),
+              //     height: Monument.size,
+              //     width: Monument.size,
+              //     child: Icon(Icons.ad_units),
+              //   ),
+              // ],
               popupController: _popupLayerController,
               popupDisplayOptions: PopupDisplayOptions(
                 builder: (_, Marker marker) {
