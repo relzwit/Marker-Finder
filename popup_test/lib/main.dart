@@ -1,18 +1,13 @@
-import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:csv/csv.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'dart:math';
 import 'package:geolocator/geolocator.dart';
-import 'package:latlong2/latlong.dart';
 
 void main() => runApp(const MyApp());
 
@@ -37,8 +32,20 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   final PopupController _popupLayerController = PopupController();
+
+  //  NEED TO DO:
+  //   1. populate _closeLocations list
+  //   2. loop through _closeLocations and add data as a Monument object to _marker_obj_list
+  //   3. streamline Haversine
+
+  // ? raw csv lines i think
   List<List<dynamic>> _data = [];
+
+  // list of locations within the specified radius
   List<List<dynamic>> _closeLocations = [];
+
+  // this will be filled with the marker objects for the markers listed in _closeLocations
+  List<Marker> _marker_obj_list = [];
 
   Position? _position;
 
@@ -86,19 +93,19 @@ class _MapPageState extends State<MapPage> {
     return await Geolocator.getCurrentPosition();
   }
 
-  void _loadCSV() async {
-    // if (_closeLocations.isEmpty) {
-    //   _getCurrentLocation();
-    // }
-    final _rawData = await rootBundle.loadString("assets/hmdb.csv");
-    List<List<dynamic>> _listData =
-        const CsvToListConverter().convert(_rawData);
-    setState(() {
-      _data = _listData;
-      _data.removeAt(0); // remove top line of csv
-      //_close_locations = _data; // a list for the locations to display
-    });
-  }
+  // void _loadCSV() async {
+  //   // if (_closeLocations.isEmpty) {
+  //   //   _getCurrentLocation();
+  //   // }
+  //   final _rawData = await rootBundle.loadString("assets/hmdb.csv");
+  //   List<List<dynamic>> _listData =
+  //       const CsvToListConverter().convert(_rawData);
+  //   setState(() {
+  //     _data = _listData;
+  //     _data.removeAt(0); // remove top line of csv
+  //     //_close_locations = _data; // a list for the locations to display
+  //   });
+  // }
 
   void _fillCloseLocations() async {
     final R = 6372.8; // In kilometers
@@ -117,6 +124,15 @@ class _MapPageState extends State<MapPage> {
       return R * c;
     }
 
+    final _rawData = await rootBundle.loadString("assets/hmdb.csv");
+    List<List<dynamic>> _listData =
+        const CsvToListConverter().convert(_rawData);
+    setState(() {
+      _data = _listData;
+      _data.removeAt(0); // remove top line of csv
+      _closeLocations = _data; // a list for the locations to display
+    });
+
     //  testing for null ensures that the map launches with a valid initial center
     if (_position != null) {
       double my_lat = _position!.latitude;
@@ -129,12 +145,18 @@ class _MapPageState extends State<MapPage> {
         // distance in Kilometers
         // need to catch the error if there is
         // nothing within the selected distance
-        if (haversine(my_lat!, my_lon!, lat_2, lon_2) < acceptable_dist) {
-          _closeLocations.add(element);
+        // if (haversine(my_lat, my_lon, lat_2, lon_2) < acceptable_dist) {
+        //    _closeLocations.add(element);
+        //   // here i need to add the coordinate of current element to the marker list
+        // }
+        if (haversine(my_lat, my_lon, lat_2, lon_2) > acceptable_dist) {
+          _closeLocations.remove(element);
           // here i need to add the coordinate of current element to the marker list
         }
       }
     }
+    int len_of_list = _closeLocations.length;
+    print("_closeLocations list size is:  $len_of_list");
   }
 
 // TODO: 1. CREATE A LIST OF MARKER OBJECTS
@@ -202,6 +224,26 @@ class _MapPageState extends State<MapPage> {
               ),
             ),
           ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _fillCloseLocations,
+        child: const Icon(Icons.location_disabled),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_filled),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.location_on_outlined),
+            label: 'Map',
+          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.chat),
+          //   label: 'Chats',
+          // ),
         ],
       ),
     );
