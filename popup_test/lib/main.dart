@@ -31,12 +31,8 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  final MapController mapController = MapController();
   final PopupController _popupLayerController = PopupController();
-
-  //  NEED TO DO:
-  //   1. populate _closeLocations list
-  //   2. loop through _closeLocations and add data as a Monument object to _marker_obj_list
-  //   3. streamline Haversine
 
   // ? raw csv lines i think
   List<List<dynamic>> _data = [];
@@ -108,7 +104,12 @@ class _MapPageState extends State<MapPage> {
   // }
 
   void _fillCloseLocations() async {
+    //TODO: convert to geolocator coord comparisons
+    final rando_coords = LatLng(45, 67);
+    // mapController.move(rando_coords, 7);
+
     final R = 6372.8; // In kilometers
+    final _rawData = await rootBundle.loadString("assets/hmdb.csv");
     double _toRadians(double degree) {
       return degree * pi / 180;
     }
@@ -124,57 +125,59 @@ class _MapPageState extends State<MapPage> {
       return R * c;
     }
 
-    final _rawData = await rootBundle.loadString("assets/hmdb.csv");
-    List<List<dynamic>> _listData =
-        const CsvToListConverter().convert(_rawData);
-    setState(() {
-      _data = _listData;
-      _data.removeAt(0); // remove top line of csv
-      _closeLocations = _data; // a list for the locations to display
-    });
+    if (_closeLocations.isEmpty) {
+      List<List<dynamic>> _listData =
+          const CsvToListConverter().convert(_rawData);
+      setState(() {
+        _data = _listData;
+        _data.removeAt(0); // remove top line of csv
+        // _closeLocations = _data; // a list for the locations to display
+      });
 
-    //  testing for null ensures that the map launches with a valid initial center
-    if (_position != null) {
-      double my_lat = _position!.latitude;
-      double my_lon = _position!.longitude;
+      //  testing for null ensures that the map launches with a valid initial center
+      if (_position != null) {
+        double my_lat = _position!.latitude;
+        double my_lon = _position!.longitude;
+        //TODO: there is a bracket missing somewhere
+        //TODO: need to set default location then change on_click maybe
 
-      for (var element in _data) {
-        double lon_2 = element[8];
-        double lat_2 = element[7];
-        double acceptable_dist = 30.1;
-        // distance in Kilometers
-        // need to catch the error if there is
-        // nothing within the selected distance
-        // if (haversine(my_lat, my_lon, lat_2, lon_2) < acceptable_dist) {
-        //    _closeLocations.add(element);
-        //   // here i need to add the coordinate of current element to the marker list
-        // }
-        if (haversine(my_lat, my_lon, lat_2, lon_2) > acceptable_dist) {
-          _closeLocations.remove(element);
-          _marker_obj_list.add(
-            MonumentMarker(
-              monument: Monument(
-                name: element[2],
-                imagePath: 'assets/imgs/an_elephant.jpg', // default image
-                lat: element[7],
-                long: element[8],
-                id: element[0],
-                link: element[16],
-              )
-            )
-          );
+        for (var element in _data) {
+          double lon_2 = element[8];
+          double lat_2 = element[7];
+          double acceptable_dist = 30.1;
+          // distance in Kilometers
+          // need to catch the error if there is
+          // nothing within the selected distance
+          if (haversine(my_lat, my_lon, lat_2, lon_2) < acceptable_dist) {
+            _closeLocations.add(element);
+
+            // adds
+            _marker_obj_list.add(MonumentMarker(
+                monument: Monument(
+              name: element[2],
+              imagePath: 'assets/imgs/an_elephant.jpg', // default image
+              lat: element[7],
+              long: element[8],
+              id: element[0],
+              link: element[16],
+            )));
+          }
         }
       }
+    } else {
+      print("_closeLocations is already filled");
     }
+
     int len_of_list = _closeLocations.length;
     print("_closeLocations list size is:  $len_of_list");
   }
 
-// TODO: 1. CREATE A LIST OF MARKER OBJECTS
-//       2. INSIDE THE SCAFFOLD, ITERATE THROUGH THE LIST AND DISPLAY THE COORDS AS MARKERS
-//       3. MODIFY THE MARKER CONSTRUCTOR TO INCLUDE AN ID
-//       4. USE ID TO LINK THE CORRECT IMAGE TO THE POPUP BUILDER
-//       5. look into error page for fluttermap
+//TODO:       1. populate _closeLocations list
+//TODO:       2. loop through _closeLocations and add data as a Monument object to _marker_obj_list
+//TODO:       3. streamline Haversine
+//TODO:       4. USE ID TO LINK THE CORRECT IMAGE TO THE POPUP BUILDER
+//TODO:       5. look into error page for fluttermap
+//TODO:       6. swap to flutter_map_cancellable_tile_provider?
 
   @override
   Widget build(BuildContext context) {
@@ -253,15 +256,23 @@ class _MapPageState extends State<MapPage> {
             icon: Icon(Icons.location_on_outlined),
             label: 'Map',
           ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.chat),
-          //   label: 'Chats',
-          // ),
         ],
       ),
     );
   }
 }
+
+// class mapController {
+//   _marker_obj_list.add(MonumentMarker(
+//               monument: Monument(
+//             name: element[2],
+//             imagePath: 'assets/imgs/an_elephant.jpg', // default image
+//             lat: element[7],
+//             long: element[8],
+//             id: element[0],
+//             link: element[16],
+//           )));
+// }
 
 class Monument {
   static const double size = 25;
@@ -301,6 +312,10 @@ class MonumentMarkerPopup extends StatelessWidget {
   const MonumentMarkerPopup({super.key, required this.monument});
   final Monument monument;
 
+/*
+* renders the popups for each marker
+* the children are displayed on the window/card
+*/
   @override
   Widget build(BuildContext context) {
     return SizedBox(
