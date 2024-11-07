@@ -140,7 +140,7 @@ class _MapPageState extends State<MapPage> {
           if (haversine(my_lat, my_lon, lat_2, lon_2) < acceptable_dist) {
             _closeLocations.add(element);
 
-            // adds
+            // adds each marker to a list as a monument obj
             _marker_obj_list.add(MonumentMarker(
                 monument: Monument(
               name: element[2],
