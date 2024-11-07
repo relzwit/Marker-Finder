@@ -89,27 +89,25 @@ class _MapPageState extends State<MapPage> {
     return await Geolocator.getCurrentPosition();
   }
 
-  // void _loadCSV() async {
-  //   // if (_closeLocations.isEmpty) {
-  //   //   _getCurrentLocation();
-  //   // }
-  //   final _rawData = await rootBundle.loadString("assets/hmdb.csv");
-  //   List<List<dynamic>> _listData =
-  //       const CsvToListConverter().convert(_rawData);
-  //   setState(() {
-  //     _data = _listData;
-  //     _data.removeAt(0); // remove top line of csv
-  //     //_close_locations = _data; // a list for the locations to display
-  //   });
-  // }
+  int _haversine() {}
+
+  void _loadCSV() async {
+    final _rawData = await rootBundle.loadString("assets/hmdb.csv");
+    List<List<dynamic>> _listData =
+        const CsvToListConverter().convert(_rawData);
+    setState(() {
+      _data = _listData;
+      _data.removeAt(0); // remove top line of csv
+      //_close_locations = _data; // a list for the locations to display
+    });
+  }
 
   void _fillCloseLocations() async {
     //TODO: convert to geolocator coord comparisons
     final rando_coords = LatLng(45, 67);
-    // mapController.move(rando_coords, 7);
+    // mapController.move(rando_coords, 7); // hopefully updating map after render
 
     final R = 6372.8; // In kilometers
-    final _rawData = await rootBundle.loadString("assets/hmdb.csv");
     double _toRadians(double degree) {
       return degree * pi / 180;
     }
@@ -126,14 +124,6 @@ class _MapPageState extends State<MapPage> {
     }
 
     if (_closeLocations.isEmpty) {
-      List<List<dynamic>> _listData =
-          const CsvToListConverter().convert(_rawData);
-      setState(() {
-        _data = _listData;
-        _data.removeAt(0); // remove top line of csv
-        // _closeLocations = _data; // a list for the locations to display
-      });
-
       //  testing for null ensures that the map launches with a valid initial center
       if (_position != null) {
         double my_lat = _position!.latitude;
@@ -178,6 +168,18 @@ class _MapPageState extends State<MapPage> {
 //TODO:       4. USE ID TO LINK THE CORRECT IMAGE TO THE POPUP BUILDER
 //TODO:       5. look into error page for fluttermap
 //TODO:       6. swap to flutter_map_cancellable_tile_provider?
+
+  void _buttonClickedFunction() {
+    if (_data.isEmpty) {
+      _loadCSV();
+    }
+    if (_closeLocations.isEmpty) {
+      _fillCloseLocations();
+    }
+
+    setState(
+        () {}); // tells flutter to schedule a rebuild after the button click stuff finishes
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -243,7 +245,7 @@ class _MapPageState extends State<MapPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _fillCloseLocations,
+        onPressed: _buttonClickedFunction,
         child: const Icon(Icons.location_disabled),
       ),
       bottomNavigationBar: BottomNavigationBar(
