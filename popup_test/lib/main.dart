@@ -89,7 +89,7 @@ class _MapPageState extends State<MapPage> {
     return await Geolocator.getCurrentPosition();
   }
 
-  int _haversine() {}
+  // int _haversine() {}
 
   void _loadCSV() async {
     final _rawData = await rootBundle.loadString("assets/hmdb.csv");
@@ -98,7 +98,6 @@ class _MapPageState extends State<MapPage> {
     setState(() {
       _data = _listData;
       _data.removeAt(0); // remove top line of csv
-      //_close_locations = _data; // a list for the locations to display
     });
   }
 
