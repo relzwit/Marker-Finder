@@ -95,89 +95,77 @@ class _MapPageState extends State<MapPage> {
     final _rawData = await rootBundle.loadString("assets/hmdb.csv");
     List<List<dynamic>> _listData =
         const CsvToListConverter().convert(_rawData);
+    print("csv list len $_data.length");
+
     setState(() {
       _data = _listData;
       _data.removeAt(0); // remove top line of csv
+      //_close_locations = _data; // a list for the locations to display
     });
   }
 
   void _fillCloseLocations() async {
     //TODO: convert to geolocator coord comparisons
-    final rando_coords = LatLng(45, 67);
+    // final rando_coords = LatLng(45, 67);
     // mapController.move(rando_coords, 7); // hopefully updating map after render
 
-    final R = 6372.8; // In kilometers
-    double _toRadians(double degree) {
-      return degree * pi / 180;
-    }
+    //  testing for null ensures that the map launches with a valid initial center
+    // double my_lat = _position!.latitude;
+    // double my_lon = _position!.longitude;
 
-    double haversine(double lat1, lon1, lat2, lon2) {
-      double dLat = _toRadians(lat2 - lat1);
-      double dLon = _toRadians(lon2 - lon1);
-      lat1 = _toRadians(lat1);
-      lat2 = _toRadians(lat2);
-      double a =
-          pow(sin(dLat / 2), 2) + pow(sin(dLon / 2), 2) * cos(lat1) * cos(lat2);
-      double c = 2 * asin(sqrt(a));
-      return R * c;
-    }
+    double my_lat = 35.048816306111476;
+    double my_lon = -85.0503950213476;
 
-    if (_closeLocations.isEmpty) {
-      //  testing for null ensures that the map launches with a valid initial center
-      if (_position != null) {
-        double my_lat = _position!.latitude;
-        double my_lon = _position!.longitude;
-        //TODO: there is a bracket missing somewhere
-        //TODO: need to set default location then change on_click maybe
+    //TODO: need to set default location then change on_click maybe
 
-        for (var element in _data) {
-          double lon_2 = element[8];
-          double lat_2 = element[7];
-          double acceptable_dist = 30.1;
-          // distance in Kilometers
-          // need to catch the error if there is
-          // nothing within the selected distance
-          if (haversine(my_lat, my_lon, lat_2, lon_2) < acceptable_dist) {
-            _closeLocations.add(element);
-
-            // adds each marker to a list as a monument obj
-            _marker_obj_list.add(MonumentMarker(
-                monument: Monument(
-              name: element[2],
-              imagePath: 'assets/imgs/an_elephant.jpg', // default image
-              lat: element[7],
-              long: element[8],
-              id: element[0],
-              link: element[16],
-            )));
-          }
-        }
+    for (var element in _data) {
+      double lon_2 = element[8];
+      double lat_2 = element[7];
+      double acceptable_dist = 3000.1;
+      // distance in Kilometers
+      // need to catch the error if there is
+      // nothing within the selected distance
+      if (Geolocator.distanceBetween(my_lat, my_lon, lat_2, lon_2) <
+          acceptable_dist) {
+        _closeLocations.add(element);
+        _marker_obj_list.add(MonumentMarker(
+            // adds the marker to the marker obj list
+            monument: Monument(
+          name: element[2],
+          imagePath: 'assets/imgs/an_elephant.jpg', // default image
+          lat: element[7],
+          long: element[8],
+          id: element[0],
+          link: element[16],
+        )));
       }
-    } else {
-      print("_closeLocations is already filled");
     }
-
-    int len_of_list = _closeLocations.length;
-    print("_closeLocations list size is:  $len_of_list");
   }
 
-//TODO:       1. populate _closeLocations list
-//TODO:       2. loop through _closeLocations and add data as a Monument object to _marker_obj_list
-//TODO:       3. streamline Haversine
+//TODO:       1. marker clustering
+//TODO:       2. fix bug where button needs to be doubleclicked
 //TODO:       4. USE ID TO LINK THE CORRECT IMAGE TO THE POPUP BUILDER
 //TODO:       5. look into error page for fluttermap
 //TODO:       6. swap to flutter_map_cancellable_tile_provider?
 
   void _buttonClickedFunction() {
-    if (_data.isEmpty) {
-      _loadCSV();
-    }
-    if (_closeLocations.isEmpty) {
-      _fillCloseLocations();
-    }
+    setState(() {
+      if (_data.length < 1) {
+        print("data empty; csv loading");
+        _loadCSV();
+        print("data empty; csv loaded");
+      }
 
-    setState(
-        () {}); // tells flutter to schedule a rebuild after the button click stuff finishes
+      if (_closeLocations.length < 1) {
+        print("locations empty; filtering");
+        _fillCloseLocations();
+        print("locations empty; filtered");
+      }
+      int len_of_list = _closeLocations.length;
+      print("_closeLocations list size is:  $len_of_list");
+      int len_of_list_2 = _data.length;
+      print("_closeLocations list size is:  $len_of_list_2");
+    }); // tells flutter to schedule a rebuild after the button click stuff finishes
   }
 
   @override
@@ -262,18 +250,6 @@ class _MapPageState extends State<MapPage> {
     );
   }
 }
-
-// class mapController {
-//   _marker_obj_list.add(MonumentMarker(
-//               monument: Monument(
-//             name: element[2],
-//             imagePath: 'assets/imgs/an_elephant.jpg', // default image
-//             lat: element[7],
-//             long: element[8],
-//             id: element[0],
-//             link: element[16],
-//           )));
-// }
 
 class Monument {
   static const double size = 25;
