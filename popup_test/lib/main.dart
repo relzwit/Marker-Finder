@@ -9,6 +9,8 @@ import 'package:flutter/services.dart';
 import 'dart:math';
 import 'package:geolocator/geolocator.dart';
 
+import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
+
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
@@ -39,6 +41,7 @@ class _MapPageState extends State<MapPage> {
 
   // list of locations within the specified radius
   List<List<dynamic>> _closeLocations = [];
+  List<Marker> _marker_coords = [];
 
   // this will be filled with the marker objects for the markers listed in _closeLocations
   List<Marker> _marker_obj_list = [];
@@ -121,7 +124,7 @@ class _MapPageState extends State<MapPage> {
     for (var element in _data) {
       double lon_2 = element[8];
       double lat_2 = element[7];
-      double acceptable_dist = 3000.1;
+      double acceptable_dist = 30000.1;
       // distance in Kilometers
       // need to catch the error if there is
       // nothing within the selected distance
@@ -189,35 +192,6 @@ class _MapPageState extends State<MapPage> {
           PopupMarkerLayer(
             options: PopupMarkerLayerOptions(
               markers: _marker_obj_list,
-              // markers: <Marker>[
-              //   MonumentMarker(
-              //     monument: Monument(
-              //       name: 'Graceland Marker',
-              //       imagePath: 'assets/imgs/graceland.jpg',
-              //       lat: 35.04679,
-              //       long: -90.02463,
-              //       id: 6,
-              //       link: "",
-              //     ),
-              //   ),
-              //   MonumentMarker(
-              //     monument: Monument(
-              //       name: 'Casper Mansker',
-              //       imagePath: 'assets/imgs/casper.jpg',
-              //       lat: 36.32083,
-              //       long: -86.71333,
-              //       id: 5,
-              //       link: "",
-              //     ),
-              //   ),
-              //   const Marker(
-              //     alignment: Alignment.topCenter,
-              //     point: LatLng(48.859661, 2.305135),
-              //     height: Monument.size,
-              //     width: Monument.size,
-              //     child: Icon(Icons.ad_units),
-              //   ),
-              // ],
               popupController: _popupLayerController,
               popupDisplayOptions: PopupDisplayOptions(
                 builder: (_, Marker marker) {
