@@ -6,7 +6,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'dart:math';
 import 'package:geolocator/geolocator.dart';
 
 void main() => runApp(const MyApp());
