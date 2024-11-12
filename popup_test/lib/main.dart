@@ -9,8 +9,6 @@ import 'package:flutter/services.dart';
 import 'dart:math';
 import 'package:geolocator/geolocator.dart';
 
-import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
-
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
