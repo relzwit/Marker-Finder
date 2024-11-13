@@ -1,16 +1,8 @@
-# csv_testing
+# popup_testing
 
-A new Flutter project.
+omg, this guy will not stop talking. he just likes to hear himself talk.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This folder is the current main working folder for the complete version of the app.
+To run ensure that flutter is properly installed, then:
+1. enter the root of popup_testing
+2. `flutter run`
