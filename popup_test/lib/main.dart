@@ -174,7 +174,7 @@ class _MapPageState extends State<MapPage> {
       body: FlutterMap(
         options: MapOptions(
           initialCenter: const LatLng(30, -85),
-          initialZoom: 3.0,
+          initialZoom: 10.0,
           maxZoom: 30,
           interactionOptions: const InteractionOptions(
             flags: InteractiveFlag.all,
