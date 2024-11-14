@@ -35,6 +35,7 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     _loadCSV();
+    // _fillCloseLocations();
   }
 
   final MapController mapController = MapController();
@@ -53,8 +54,14 @@ class _MapPageState extends State<MapPage> {
 
   void _getCurrentLocation() async {
     Position position = await _determinePosition();
+    // print("made it here 1");
+    // _fillCloseLocations();
+    // print("close locs len (right after GCL): ");
+    // print(_closeLocations.length);
+
     setState(() {
       _position = position;
+
       // my_current_latitude = _position!.latitude;
       // my_current_longitude = _position!.longitude;
     });
@@ -112,6 +119,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _fillCloseLocations() async {
+    print("---close loces fill entered---");
     //  testing for null ensures that the map launches with a valid initial center
     // double my_lat = _position!.latitude;
     // double my_lon = _position!.longitude;
