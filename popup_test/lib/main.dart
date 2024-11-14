@@ -102,7 +102,8 @@ class _MapPageState extends State<MapPage> {
     final _rawData = await rootBundle.loadString("assets/mycsv.csv");
     List<List<dynamic>> _listData =
         const CsvToListConverter().convert(_rawData);
-    print("csv list len $_data.length");
+    int lengthss = _listData.length;
+    print("csv data list is len $lengthss");
 
     setState(() {
       _data = _listData;
@@ -132,7 +133,7 @@ class _MapPageState extends State<MapPage> {
             // adds the marker to the marker obj list
             monument: Monument(
           name: element[2],
-          imagePath: 'assets/imgs/an_elephant.jpg', // default image
+          // imagePath: 'assets/imgs/an_elephant.jpg', // default image
           lat: element[7],
           long: element[8],
           id: element[0],
@@ -154,17 +155,7 @@ class _MapPageState extends State<MapPage> {
 
   void _buttonClickedFunction() {
     setState(() {
-      // if (_data.length < 1) {
-      //   print("data empty; csv loading");
-      //   _loadCSV();
-      //   print("data empty; csv loaded");
-      // }
-
-      if (_closeLocations.length < 1) {
-        print("locations empty; filtering");
-        _fillCloseLocations();
-        print("locations empty; filtered");
-      }
+      _fillCloseLocations();
       int len_of_list = _closeLocations.length;
       print("_closeLocations list size is:  $len_of_list");
     }); // tells flutter to schedule a rebuild after the button click stuff finishes
@@ -211,12 +202,12 @@ class _MapPageState extends State<MapPage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_filled),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.location_on_outlined),
             label: 'Map',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_2_outlined),
+            label: 'Profile',
           ),
         ],
       ),
@@ -229,7 +220,7 @@ class Monument {
 
   Monument({
     required this.name,
-    required this.imagePath,
+    // required this.imagePath,
     required this.lat,
     required this.long,
     required this.id,
@@ -237,7 +228,7 @@ class Monument {
   });
 
   final String name;
-  final String imagePath;
+  // final String imagePath;
   final String link;
   final double lat;
   final double long;
@@ -277,7 +268,7 @@ class MonumentMarkerPopup extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Image.network(monument.imagePath, width: 200),
+            // Image.network(monument.imagePath, width: 200),
             Text(monument.name),
             Text('${monument.lat}, ${monument.long}'),
             Text(monument.link),
