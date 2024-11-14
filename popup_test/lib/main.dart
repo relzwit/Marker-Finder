@@ -1,3 +1,4 @@
+import 'package:csv_testing/variables.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -30,6 +31,12 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  @override
+  void initState() {
+    super.initState();
+    _loadCSV();
+  }
+
   final MapController mapController = MapController();
   final PopupController _popupLayerController = PopupController();
 
@@ -38,7 +45,6 @@ class _MapPageState extends State<MapPage> {
 
   // list of locations within the specified radius
   List<List<dynamic>> _closeLocations = [];
-  List<Marker> _marker_coords = [];
 
   // this will be filled with the marker objects for the markers listed in _closeLocations
   List<Marker> _marker_obj_list = [];
@@ -49,6 +55,8 @@ class _MapPageState extends State<MapPage> {
     Position position = await _determinePosition();
     setState(() {
       _position = position;
+      // my_current_latitude = _position!.latitude;
+      // my_current_longitude = _position!.longitude;
     });
   }
 
@@ -89,10 +97,9 @@ class _MapPageState extends State<MapPage> {
     return await Geolocator.getCurrentPosition();
   }
 
-  // int _haversine() {}
-
   void _loadCSV() async {
-    final _rawData = await rootBundle.loadString("assets/hmdb.csv");
+    // final _rawData = await rootBundle.loadString("assets/hmdb.csv");
+    final _rawData = await rootBundle.loadString("assets/mycsv.csv");
     List<List<dynamic>> _listData =
         const CsvToListConverter().convert(_rawData);
     print("csv list len $_data.length");
@@ -100,23 +107,16 @@ class _MapPageState extends State<MapPage> {
     setState(() {
       _data = _listData;
       _data.removeAt(0); // remove top line of csv
-      //_close_locations = _data; // a list for the locations to display
     });
   }
 
   void _fillCloseLocations() async {
-    //TODO: convert to geolocator coord comparisons
-    // final rando_coords = LatLng(45, 67);
-    // mapController.move(rando_coords, 7); // hopefully updating map after render
-
     //  testing for null ensures that the map launches with a valid initial center
     // double my_lat = _position!.latitude;
     // double my_lon = _position!.longitude;
 
     double my_lat = 35.048816306111476;
     double my_lon = -85.0503950213476;
-
-    //TODO: need to set default location then change on_click maybe
 
     for (var element in _data) {
       double lon_2 = element[8];
@@ -152,14 +152,13 @@ class _MapPageState extends State<MapPage> {
 //TODO:       9. make links clickable in the popup box
 //TODO:      10. web scraping to get proper imgs and descriptions
 
-
   void _buttonClickedFunction() {
     setState(() {
-      if (_data.length < 1) {
-        print("data empty; csv loading");
-        _loadCSV();
-        print("data empty; csv loaded");
-      }
+      // if (_data.length < 1) {
+      //   print("data empty; csv loading");
+      //   _loadCSV();
+      //   print("data empty; csv loaded");
+      // }
 
       if (_closeLocations.length < 1) {
         print("locations empty; filtering");
@@ -168,8 +167,6 @@ class _MapPageState extends State<MapPage> {
       }
       int len_of_list = _closeLocations.length;
       print("_closeLocations list size is:  $len_of_list");
-      int len_of_list_2 = _data.length;
-      print("_closeLocations list size is:  $len_of_list_2");
     }); // tells flutter to schedule a rebuild after the button click stuff finishes
   }
 
@@ -178,8 +175,8 @@ class _MapPageState extends State<MapPage> {
     return Scaffold(
       body: FlutterMap(
         options: MapOptions(
-          initialCenter: const LatLng(30, -85),
-          initialZoom: 10.0,
+          initialCenter: const LatLng(35, -85), //good initial center
+          initialZoom: 7.0,
           maxZoom: 30,
           interactionOptions: const InteractionOptions(
             flags: InteractiveFlag.all,
