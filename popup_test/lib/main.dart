@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         title: 'Marker with additional data example',
         theme: ThemeData(
           useMaterial3: true,
-          scaffoldBackgroundColor: Color(45),
+          scaffoldBackgroundColor: Color.fromARGB(0, 71, 71, 220),
           colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.purple,
             brightness: Brightness.dark,
