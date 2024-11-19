@@ -16,10 +16,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Marker with additional data example',
-      home: MapPage(),
-    );
+    return MaterialApp(
+        //was const type
+        title: 'Marker with additional data example',
+        home: MapPage(),
+        initialRoute: "/",
+        routes: {
+          '/second': (context) => const SecondPage(),
+        });
   }
 }
 
@@ -30,7 +34,16 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => _MapPageState();
 }
 
+// class ProfilePage extends StatefulWidget{
+//   const ProfilePage({super.key});
+
+//   @override
+//   State<ProfilePage> createState() =>
+// }
+
 class _MapPageState extends State<MapPage> {
+  int index = 0;
+
   @override
   void initState() {
     super.initState();
@@ -212,12 +225,40 @@ class _MapPageState extends State<MapPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.location_on_outlined),
             label: 'Map',
+            selectedIndex: index,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_2_outlined),
             label: 'Profile',
           ),
         ],
+      ),
+    );
+  }
+}
+
+// class _profilePage extends
+/// Add the second screen
+class SecondPage extends StatefulWidget {
+  const SecondPage({Key? key}) : super(key: key);
+
+  @override
+  _SecondPageState createState() => _SecondPageState();
+}
+
+class _SecondPageState extends State<SecondPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Flutter Demo Second Page"),
+      ),
+      body: Center(
+        child: ElevatedButton(
+            child: Text("Go back"),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
       ),
     );
   }
