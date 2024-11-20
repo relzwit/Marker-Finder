@@ -1,4 +1,3 @@
-import 'package:csv_testing/variables.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -8,10 +7,10 @@ import 'package:csv/csv.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-import './pages/map_page.dart';
+import 'pages/map_page.dart';
 import 'package:flutter/src/material/theme_data.dart';
 
-void main() => runApp(const MyApp());
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -19,24 +18,67 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        //was const type
-        title: 'Marker with additional data example',
-        theme: ThemeData(
-          useMaterial3: true,
-          scaffoldBackgroundColor: Color.fromARGB(0, 71, 71, 220),
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.purple,
-            brightness: Brightness.dark,
-            ),
-        ),
-        home: MapPage(),
-        // initialRoute: "/",
-        // routes: {
-        //   '/second': (context) => const SecondPage(),
-        // });
+      //was const type
+      title: 'Historical Marker finder',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.amber,
+        useMaterial3: true,
+      ),
+      home: MapPage(),
+      // initialRoute: "/",
+      // routes: {
+      //   '/second': (context) => const SecondPage(),
+      // });
     );
   }
 }
+
+// class MyApp extends StatelessWidget {
+//   MyApp({super.key});
+
+//   int _selectedIndex = 0;
+
+//   void barTapped(int index) {
+//     setState() {
+//       _selectedIndex = index;
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Center(
+//         child: Text(
+//           'Home',
+//           style: TextStyle(fontSize: 60),
+//         ),
+//       ),
+//       bottomNavigationBar: BottomNavigationBar(
+//         currentIndex: 1,
+//         onTap: barTapped,
+//         items: [
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.home),
+//             label: 'Home',
+//             backgroundColor: Colors.blue,
+//           ),
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.person),
+//             label: 'Profile',
+//             backgroundColor: Colors.brown,
+//           )
+//         ],
+//       ),
+//     );
+    //was const type
+
+    // initialRoute: "/",
+    // routes: {
+    //   '/second': (context) => const SecondPage(),
+    // });
+//   }
+// }
+
 
 // class MapPage extends StatefulWidget {
 //   const MapPage({super.key});

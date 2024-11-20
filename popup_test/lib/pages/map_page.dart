@@ -1,5 +1,4 @@
 import 'package:csv_testing/pages/profile_page.dart';
-import 'package:csv_testing/variables.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -26,8 +25,6 @@ class MapPage extends StatefulWidget {
 // }
 
 class _MapPageState extends State<MapPage> {
-  int _selectedIndex = 0;
-
   @override
   void initState() {
     super.initState();
@@ -51,16 +48,9 @@ class _MapPageState extends State<MapPage> {
 
   void _getCurrentLocation() async {
     Position position = await _determinePosition();
-    // print("made it here 1");
-    // _fillCloseLocations();
-    // print("close locs len (right after GCL): ");
-    // print(_closeLocations.length);
 
     setState(() {
       _position = position;
-
-      // my_current_latitude = _position!.latitude;
-      // my_current_longitude = _position!.longitude;
     });
   }
 
@@ -117,9 +107,6 @@ class _MapPageState extends State<MapPage> {
 
   void _fillCloseLocations() async {
     print("---close loces fill entered---");
-    //  testing for null ensures that the map launches with a valid initial center
-    // double my_lat = _position!.latitude;
-    // double my_lon = _position!.longitude;
 
     double my_lat = 35.048816306111476;
     double my_lon = -85.0503950213476;
@@ -137,16 +124,15 @@ class _MapPageState extends State<MapPage> {
         _marker_obj_list.add(MonumentMarker(
             // adds the marker to the marker obj list
             monument: Monument(
-              name: element[2],
-              //imagePath: 'assets/imgs/an_elephant.jpg', // default image
-              imagePath: Image.network('https://www.hmdb.org/Photos7/703/Photo703003o.jpg?129202350700PM'),
-              lat: element[7],
-              long: element[8],
-              id: element[0],
-              link: element[16],
-            )
-          )
-        );
+          name: element[2],
+          //imagePath: 'assets/imgs/an_elephant.jpg', // default image
+          imagePath: Image.network(
+              'https://www.hmdb.org/Photos7/703/Photo703003o.jpg?129202350700PM'),
+          lat: element[7],
+          long: element[8],
+          id: element[0],
+          link: element[16],
+        )));
       }
     }
   }
@@ -178,6 +164,12 @@ class _MapPageState extends State<MapPage> {
   // final List<Widget> _pages = [
   //   SecondPage(),
   // ];
+
+  int _selectedIndex = 0;
+  final screens = [
+    MapPage(),
+    // SecondPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
