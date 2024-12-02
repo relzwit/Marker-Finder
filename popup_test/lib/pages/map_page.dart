@@ -9,6 +9,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/src/material/theme_data.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -155,6 +156,11 @@ class _MapPageState extends State<MapPage> {
     }); // tells flutter to schedule a rebuild after the button click stuff finishes
   }
 
+  void _testMapLaunch() {
+    MapsLauncher.launchQuery(
+        '1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA');
+  }
+
   // void _navigateBottomBar(int index){
   //   setState(() {
   //     _selectedIndex = index;
@@ -207,10 +213,26 @@ class _MapPageState extends State<MapPage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _buttonClickedFunction,
-        child: const Icon(Icons.location_disabled),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: _buttonClickedFunction,
+      //   child: const Icon(Icons.location_disabled),
+      // ),
+      floatingActionButton:
+          Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+        FloatingActionButton(
+          child: Icon(Icons.location_city),
+          onPressed: _buttonClickedFunction,
+          heroTag: null,
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        FloatingActionButton(
+          child: Icon(Icons.map),
+          onPressed: _testMapLaunch,
+          heroTag: null,
+        )
+      ]),
       bottomNavigationBar: BottomNavigationBar(
         // currentIndex: _selectedIndex,
         // onTap: _navigateBottomBar,
