@@ -337,14 +337,12 @@ class MonumentMarkerPopup extends StatelessWidget {
             Text(monument.name),
             Text(
                 "Inscription: Lorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit amet"),
-            // Text(monument.erectedBy),
-            // Text('${monument.lat}, ${monument.long}'),
-            // Text(monument.link),
             ElevatedButton(
               child: const Icon(Icons.directions),
               onPressed: _mapLauncher,
             ),
             SizedBox(),
+            Row(),
             ElevatedButton(
               onPressed: _launchLink,
               child: Icon(Icons.help),
