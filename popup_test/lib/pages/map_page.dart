@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/src/material/theme_data.dart';
 import 'package:maps_launcher/maps_launcher.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -119,6 +120,7 @@ class _MapPageState extends State<MapPage> {
 
       // String erect = element[8];
       // String local = element[16];
+      //wrong indeces
 
       // print("ererct: $erect");
       // print("location is: $local");
@@ -138,7 +140,7 @@ class _MapPageState extends State<MapPage> {
           lat: element[7],
           long: element[8],
           id: element[0],
-          link: element[16],
+          link: Uri.parse(element[16]),
           // erectedBy: element[8],
           // location: element[16],
         )));
@@ -284,10 +286,10 @@ class Monument {
   final String name;
   // final String imagePath;
   final Widget imagePath;
-  final String link;
+  final Uri link;
   final double lat;
   final double long;
-  final int id;
+  final int id; //already parsed url
   // final String erectedBy;
   // final String location;
 }
@@ -317,8 +319,10 @@ class MonumentMarkerPopup extends StatelessWidget {
     MapsLauncher.launchQuery(location);
   }
 
-  void _launchLink() {
-    print("feature not working yet");
+  Future<void> _launchLink() async {
+    if (!await launchUrl(monument.link)) {
+      throw Exception('Could not launch your link');
+    }
   }
 
 /*
@@ -347,7 +351,10 @@ class MonumentMarkerPopup extends StatelessWidget {
               child: const Icon(Icons.directions),
               onPressed: _mapLauncher,
             ),
-            ElevatedButton(onPressed: _launchLink, child: Icon(Icons.webhook))
+            ElevatedButton(
+              onPressed: _launchLink,
+              child: Icon(Icons.webhook),
+            ),
           ],
         ),
       ),
