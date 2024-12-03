@@ -8,6 +8,11 @@ The app allows students to see the historical markers in their area and prove th
 
 ;ToDo ->
 
+features for presentation:
+- change location on tap
+- load diff csv based on location?
+- better/more UI
+
 - popup inscription scraped from website - UNFINISHED
 - popup picture scraped from the hmdb link - UNFINISHED
 - gamification in the form of points for each marker adding to a user level - UNFINISHED
