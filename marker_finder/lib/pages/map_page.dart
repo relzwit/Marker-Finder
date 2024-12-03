@@ -134,8 +134,8 @@ class _MapPageState extends State<MapPage> {
             monument: Monument(
           name: element[2],
           //imagePath: 'assets/imgs/an_elephant.jpg', // default image
-          imagePath: Image.network(
-              'https://www.hmdb.org/Photos7/703/Photo703003o.jpg?129202350700PM'),
+          //imagePath: Image.network(
+          //'https://www.hmdb.org/Photos7/703/Photo703003o.jpg?129202350700PM'),
           lat: element[7],
           long: element[8],
           id: element[0],
@@ -272,7 +272,7 @@ class Monument {
 
   Monument({
     required this.name,
-    required this.imagePath,
+    //required this.imagePath,
     required this.lat,
     required this.long,
     required this.id,
@@ -280,7 +280,7 @@ class Monument {
   });
 
   final String name;
-  final Widget imagePath;
+  //final Widget imagePath;
   final Uri link;
   final double lat;
   final double long;
@@ -343,13 +343,16 @@ class MonumentMarkerPopup extends StatelessWidget {
             // Image.network(monument.imagePath, width: 200),
             Text(monument.name),
             Text("      "),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(" "),
-                Text("Inscription: Lorem ipsum dolor sit Lorem ipsum dolor sit "),
-              ]
-            ),
+            Row(children: <Widget>[
+              Text(" "),
+              Flexible(
+                child: Text(
+                    "Inscription: Lorem ipsum dolor sit Lorem ipsum dolor sit "),
+              ),
+              // Text(" "),
+              // Text("Inscription: Lorem ipsum dolor sit Lorem ipsum dolor sit "),
+              // Text(" "),
+            ]),
             Text("      "),
             Row(
               mainAxisSize: MainAxisSize.min,
