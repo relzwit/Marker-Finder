@@ -10,8 +10,9 @@ Progress:
 - marker clustering for improved performance - UNFINISHED
 - displays a popup window when a marker is clicked - DONE
 - popup window contains:
-  - link to maps app - UNFINISHED
+  - link to maps app - DONE
   - picture is scraped from the hmdb link - UNFINISHED
   - description/tags are scraped from website - UNFINISHED
 - gamification in the form of points for each marker adding to a user level - UNFINISHED
 - persistency possible with a web app? - UNFINISHED
+- link to website on popup card - DONE
