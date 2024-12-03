@@ -1,14 +1,13 @@
-import 'package:csv_testing/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:csv/csv.dart';
-import 'package:flutter/rendering.dart';
+// import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:flutter/src/material/theme_data.dart';
+// import 'package:flutter/src/material/theme_data.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -184,11 +183,11 @@ class _MapPageState extends State<MapPage> {
   //   SecondPage(),
   // ];
 
-  int _selectedIndex = 0;
-  final screens = [
-    MapPage(),
-    // SecondPage(),
-  ];
+  // int _selectedIndex = 0;
+  // final screens = [
+  //   MapPage(),
+  //   // SecondPage(),
+  // ];
 
   @override
   Widget build(BuildContext context) {
