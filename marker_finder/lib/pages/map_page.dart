@@ -343,7 +343,13 @@ class MonumentMarkerPopup extends StatelessWidget {
             // Image.network(monument.imagePath, width: 200),
             Text(monument.name),
             Text("      "),
-            Text("Inscription: Lorem ipsum dolor sit Lorem ipsum dolor sit "),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(" "),
+                Text("Inscription: Lorem ipsum dolor sit Lorem ipsum dolor sit "),
+              ]
+            ),
             Text("      "),
             Row(
               mainAxisSize: MainAxisSize.min,
