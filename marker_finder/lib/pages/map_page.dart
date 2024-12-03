@@ -325,20 +325,25 @@ class MonumentMarkerPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 200,
+      width: 300,
       child: Card(
-        margin: EdgeInsets.all(3.3),
+        margin: EdgeInsets.symmetric(vertical: 3.0, horizontal: 3.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
+          side: BorderSide(
+            width: 1.0,
+            color: const Color.fromARGB(255, 64, 58, 2),
+          ),
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             // Image.network(monument.imagePath, width: 200),
             Text(monument.name),
             Text("      "),
-            Text(
-                "Inscription: Lorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit amet"),
+            Text("Inscription: Lorem ipsum dolor sit Lorem ipsum dolor sit "),
             Text("      "),
             Row(
               mainAxisSize: MainAxisSize.min,
@@ -353,6 +358,7 @@ class MonumentMarkerPopup extends StatelessWidget {
                   ),
                   child: const Icon(Icons.directions),
                 ),
+                Text(" "),
                 ElevatedButton(
                   onPressed: _launchLink,
                   style: ElevatedButton.styleFrom(
@@ -361,7 +367,7 @@ class MonumentMarkerPopup extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
-                  child: Icon(Icons.help),
+                  child: Icon(Icons.info),
                 ),
               ],
             ),
