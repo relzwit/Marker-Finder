@@ -25,10 +25,6 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: MapPage(),
-      // initialRoute: "/",
-      // routes: {
-      //   '/second': (context) => const SecondPage(),
-      // });
     );
   }
 }

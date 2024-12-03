@@ -157,8 +157,8 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _testMapLaunch() {
-    MapsLauncher.launchQuery(
-        '1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA');
+    // MapsLauncher.launchQuery('1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA');
+    MapsLauncher.launchQuery('16, 35');
   }
 
   // void _navigateBottomBar(int index){
