@@ -272,25 +272,19 @@ class Monument {
 
   Monument({
     required this.name,
-    // required this.imagePath,
     required this.imagePath,
     required this.lat,
     required this.long,
     required this.id,
     required this.link,
-    // required this.erectedBy,
-    // required this.location,
   });
 
   final String name;
-  // final String imagePath;
   final Widget imagePath;
   final Uri link;
   final double lat;
   final double long;
   final int id; //already parsed url
-  // final String erectedBy;
-  // final String location;
 }
 
 class MonumentMarker extends Marker {
@@ -350,9 +344,10 @@ class MonumentMarkerPopup extends StatelessWidget {
               child: const Icon(Icons.directions),
               onPressed: _mapLauncher,
             ),
+            SizedBox(),
             ElevatedButton(
               onPressed: _launchLink,
-              child: Icon(Icons.webhook),
+              child: Icon(Icons.help),
             ),
           ],
         ),
