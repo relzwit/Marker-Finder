@@ -327,6 +327,7 @@ class MonumentMarkerPopup extends StatelessWidget {
     return SizedBox(
       width: 200,
       child: Card(
+        margin: EdgeInsets.all(3.3),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
