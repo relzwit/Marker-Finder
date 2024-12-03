@@ -30,7 +30,7 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     _loadCSV();
-    // _fillCloseLocations();
+    _getCurrentLocation();
   }
 
   final MapController mapController = MapController();
@@ -52,6 +52,7 @@ class _MapPageState extends State<MapPage> {
 
     setState(() {
       _position = position;
+      _fillCloseLocations();
     });
   }
 
@@ -93,7 +94,6 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _loadCSV() async {
-    // final _rawData = await rootBundle.loadString("assets/hmdb.csv");
     final _rawData = await rootBundle.loadString("assets/hmdb.csv");
     List<List<dynamic>> _listData =
         const CsvToListConverter().convert(_rawData);
@@ -109,13 +109,19 @@ class _MapPageState extends State<MapPage> {
   void _fillCloseLocations() async {
     print("---close loces fill entered---");
 
-    double my_lat = 35.048816306111476;
-    double my_lon = -85.0503950213476;
+    double my_lat = _position!.latitude;
+    double my_lon = _position!.longitude;
 
     for (var element in _data) {
       double lon_2 = element[8];
       double lat_2 = element[7];
-      double acceptable_dist = 3000.1;
+      double acceptable_dist = 13000.1;
+
+      // String erect = element[8];
+      // String local = element[16];
+
+      // print("ererct: $erect");
+      // print("location is: $local");
       // distance in Kilometers
       // need to catch the error if there is
       // nothing within the selected distance
@@ -133,6 +139,8 @@ class _MapPageState extends State<MapPage> {
           long: element[8],
           id: element[0],
           link: element[16],
+          // erectedBy: element[8],
+          // location: element[16],
         )));
       }
     }
@@ -149,10 +157,13 @@ class _MapPageState extends State<MapPage> {
 //TODO:      10. web scraping to get proper imgs and descriptions
 
   void _buttonClickedFunction() {
+    _fillCloseLocations();
+    int len_of_list = _closeLocations.length;
+    print("_closeLocations list size is:  $len_of_list");
     setState(() {
-      _fillCloseLocations();
-      int len_of_list = _closeLocations.length;
-      print("_closeLocations list size is:  $len_of_list");
+      // _fillCloseLocations();
+      // int len_of_list = _closeLocations.length;
+      // print("_closeLocations list size is:  $len_of_list");
     }); // tells flutter to schedule a rebuild after the button click stuff finishes
   }
 
@@ -214,25 +225,28 @@ class _MapPageState extends State<MapPage> {
         ],
       ),
       // floatingActionButton: FloatingActionButton(
-      //   onPressed: _buttonClickedFunction,
-      //   child: const Icon(Icons.location_disabled),
+      //   onPressed: _getCurrentLocation,
+      //   child: const Text("update location"),
+      //   // child: const Icon(Icons.location_disabled),
       // ),
-      floatingActionButton:
-          Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-        FloatingActionButton(
-          child: Icon(Icons.location_city),
-          onPressed: _buttonClickedFunction,
-          heroTag: null,
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        FloatingActionButton(
-          child: Icon(Icons.map),
-          onPressed: _testMapLaunch,
-          heroTag: null,
-        )
-      ]),
+      //
+      // this method can include multiple floating action buttons:
+      // floatingActionButton:
+      //     Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+      //   FloatingActionButton(
+      //     child: Icon(Icons.location_city),
+      //     onPressed: _buttonClickedFunction,
+      //     heroTag: null,
+      //   ),
+      //   SizedBox(
+      //     height: 10,
+      //   ),
+      //   FloatingActionButton(
+      //     child: Icon(Icons.map),
+      //     onPressed: _testMapLaunch,
+      //     heroTag: null,
+      //   )
+      // ]),
       bottomNavigationBar: BottomNavigationBar(
         // currentIndex: _selectedIndex,
         // onTap: _navigateBottomBar,
@@ -263,6 +277,8 @@ class Monument {
     required this.long,
     required this.id,
     required this.link,
+    // required this.erectedBy,
+    // required this.location,
   });
 
   final String name;
@@ -272,6 +288,8 @@ class Monument {
   final double lat;
   final double long;
   final int id;
+  // final String erectedBy;
+  // final String location;
 }
 
 class MonumentMarker extends Marker {
@@ -292,6 +310,17 @@ class MonumentMarkerPopup extends StatelessWidget {
   const MonumentMarkerPopup({super.key, required this.monument});
   final Monument monument;
 
+  void _mapLauncher() {
+    String location = monument.lat.toString() + ', ' + monument.long.toString();
+    print(location);
+    // MapsLauncher.launchQuery('1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA');
+    MapsLauncher.launchQuery(location);
+  }
+
+  void _launchLink() {
+    print("feature not working yet");
+  }
+
 /*
 * renders the popups for each marker
 * the children are displayed on the window/card
@@ -309,8 +338,16 @@ class MonumentMarkerPopup extends StatelessWidget {
           children: <Widget>[
             // Image.network(monument.imagePath, width: 200),
             Text(monument.name),
-            Text('${monument.lat}, ${monument.long}'),
-            Text(monument.link),
+            Text(
+                "Erected by: Lorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit amet"),
+            // Text(monument.erectedBy),
+            // Text('${monument.lat}, ${monument.long}'),
+            // Text(monument.link),
+            ElevatedButton(
+              child: const Icon(Icons.directions),
+              onPressed: _mapLauncher,
+            ),
+            ElevatedButton(onPressed: _launchLink, child: Icon(Icons.webhook))
           ],
         ),
       ),
