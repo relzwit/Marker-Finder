@@ -207,6 +207,13 @@ class _MapPageState extends State<MapPage> {
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
           ),
           CurrentLocationLayer(),
+          Text(
+            "Marker Mapper",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 25,
+            ),
+          ),
           PopupMarkerLayer(
             options: PopupMarkerLayerOptions(
               markers: _marker_obj_list,
