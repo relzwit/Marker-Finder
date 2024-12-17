@@ -3,14 +3,9 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:csv/csv.dart';
-import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'package:html/parser.dart' as parser;
-import 'package:http/http.dart' as http;
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -30,19 +25,13 @@ class _MapPageState extends State<MapPage> {
   final MapController mapController = MapController();
   final PopupController _popupLayerController = PopupController();
 
-  // ? raw csv lines i think
-  List<List<dynamic>> _data = [];
-
-  // list of locations within the specified radius
-  List<List<dynamic>> _closeLocations = [];
-
   // this will be filled with the marker objects for the markers listed in _closeLocations
   final List<Marker> _marker_obj_list = [
     MonumentMarker(
         // adds the marker to the marker obj list
         monument: Monument(
       name: "De Soto's Route",
-      imagePath: 'assets/imgs/de_soto.jpg', // default image
+      // imagePath: 'assets/imgs/de_soto.jpg', // default image
       lat: 35.11303,
       long: -84.98160,
       id: 1,
@@ -54,7 +43,7 @@ class _MapPageState extends State<MapPage> {
         // adds the marker to the marker obj list
         monument: Monument(
       name: "Joseph Vann's town",
-      imagePath: 'assets/imgs/an_elephant.jpg', // default image
+      // imagePath: 'assets/imgs/an_elephant.jpg', // default image
       lat: 35.14543,
       long: -85.11205,
       id: 1,
@@ -66,7 +55,7 @@ class _MapPageState extends State<MapPage> {
         // adds the marker to the marker obj list
         monument: Monument(
       name: "Old Harrison",
-      imagePath: 'assets/imgs/an_elephant.jpg', // default image
+      // imagePath: 'assets/imgs/an_elephant.jpg', // default image
       lat: 35.13835,
       long: -85.12158,
       id: 1,
@@ -78,7 +67,7 @@ class _MapPageState extends State<MapPage> {
         // adds the marker to the marker obj list
         monument: Monument(
       name: "Harrison Academy",
-      imagePath: 'assets/imgs/an_elephant.jpg', // default image
+      // imagePath: 'assets/imgs/an_elephant.jpg', // default image
       lat: 35.10985,
       long: -85.14068,
       id: 1,
@@ -90,7 +79,7 @@ class _MapPageState extends State<MapPage> {
         // adds the marker to the marker obj list
         monument: Monument(
       name: "Order of the Southern Cross",
-      imagePath: 'assets/imgs/an_elephant.jpg', // default image
+      // imagePath: 'assets/imgs/an_elephant.jpg', // default image
       lat: 36.11528,
       long: -86.80757,
       id: 1,
@@ -102,7 +91,7 @@ class _MapPageState extends State<MapPage> {
         // adds the marker to the marker obj list
         monument: Monument(
       name: "County of James",
-      imagePath: 'assets/imgs/an_elephant.jpg', // default image
+      // imagePath: 'assets/imgs/an_elephant.jpg', // default image
       lat: 35.07168,
       long: -85.06032,
       id: 1,
@@ -114,7 +103,8 @@ class _MapPageState extends State<MapPage> {
         // adds the marker to the marker obj list
         monument: Monument(
       name: "Kenneth A. Wright Hall",
-      imagePath: 'assets/imgs/an_elephant.jpg', // default image
+      // imagePath: 'assets/imgs/an_elephant.jpg', // default image
+      // imagePath: Image.network('https://picsum.photos/250?image=9'),
       lat: 35.04817,
       long: -85.05184,
       id: 1,
@@ -124,13 +114,13 @@ class _MapPageState extends State<MapPage> {
     ))
   ];
 
-  Position? _position;
+  // Position? _position;
 
   void _getCurrentLocation() async {
     Position position = await _determinePosition();
 
     setState(() {
-      _position = position;
+      // _position = position;
       // _fillCloseLocations();
     });
   }
@@ -170,32 +160,6 @@ class _MapPageState extends State<MapPage> {
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
     return await Geolocator.getCurrentPosition();
-  }
-
-//TODO:       1. marker clustering
-//TODO:       2. fix bug where button needs to be doubleclicked
-//TODO:       4. USE ID TO LINK THE CORRECT IMAGE TO THE POPUP BUILDER
-//TODO:       5. look into error page for fluttermap
-//TODO:       6. swap to flutter_map_cancellable_tile_provider?
-//TODO:       7. add gamification (points, levels)
-//TODO:       8. make it more fun (animations and so on, confetti?)
-//TODO:       9. make links clickable in the popup box
-//TODO:      10. web scraping to get proper imgs and descriptions
-
-  void _buttonClickedFunction() {
-    // _fillCloseLocations();
-    int len_of_list = _closeLocations.length;
-    print("_closeLocations list size is:  $len_of_list");
-    setState(() {
-      // _fillCloseLocations();
-      // int len_of_list = _closeLocations.length;
-      // print("_closeLocations list size is:  $len_of_list");
-    }); // tells flutter to schedule a rebuild after the button click stuff finishes
-  }
-
-  void _testMapLaunch() {
-    // MapsLauncher.launchQuery('1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA');
-    MapsLauncher.launchQuery('16, 35');
   }
 
   @override
@@ -251,7 +215,7 @@ class Monument {
 
   Monument({
     required this.name,
-    required this.imagePath,
+    // required this.imagePath,
     required this.lat,
     required this.long,
     required this.id,
@@ -259,7 +223,8 @@ class Monument {
   });
 
   final String name;
-  final String imagePath;
+  // final String imagePath;
+  // final Widget imagePath;
   final Uri link;
   final double lat;
   final double long;
@@ -319,7 +284,7 @@ class MonumentMarkerPopup extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Image.network(monument.imagePath),
+            Image.network('https://picsum.photos/250?image=9'),
             // , width: 200
             Text(monument.name),
             Text("      "),
