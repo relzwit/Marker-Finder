@@ -117,7 +117,7 @@ class _MapPageState extends State<MapPage> {
   // Position? _position;
 
   void _getCurrentLocation() async {
-    Position position = await _determinePosition();
+    // Position position = await _determinePosition();
 
     setState(() {
       // _position = position;
