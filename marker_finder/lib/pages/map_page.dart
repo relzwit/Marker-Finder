@@ -8,6 +8,10 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:firebase_core/firebase_core.dart';
+// import 'firebase_options.dart';
+// import 'marker_finder/lib/firebase_options.dart';
+
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -23,12 +27,19 @@ class MapPage extends StatefulWidget {
 //   State<ProfilePage> createState() =>
 // }
 
+
 class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
     _loadCSV();
     _getCurrentLocation();
+  }
+
+  void main() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+    runApp(MapPage());
   }
 
   final MapController mapController = MapController();
@@ -129,15 +140,6 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-//TODO:       1. marker clustering
-//TODO:       2. fix bug where button needs to be doubleclicked
-//TODO:       4. USE ID TO LINK THE CORRECT IMAGE TO THE POPUP BUILDER
-//TODO:       5. look into error page for fluttermap
-//TODO:       6. swap to flutter_map_cancellable_tile_provider?
-//TODO:       7. add gamification (points, levels)
-//TODO:       8. make it more fun (animations and so on, confetti?)
-//TODO:       9. make links clickable in the popup box
-//TODO:      10. web scraping to get proper imgs and descriptions
 
   void _buttonClickedFunction() {
     _fillCloseLocations();

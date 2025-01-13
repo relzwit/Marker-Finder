@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "984320154803",
+    "project_id": "marker-finder-834f6",
+    "storage_bucket": "marker-finder-834f6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:984320154803:android:cb4734fbd70a5cec9fa4c6",
+        "android_client_info": {
+          "package_name": "com.example.csv_testing"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAa_ztJMzS0igz-ugfQ5el6by5te_R-ktM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
