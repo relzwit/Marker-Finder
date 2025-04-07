@@ -12,7 +12,6 @@ import 'package:firebase_core/firebase_core.dart';
 // import 'firebase_options.dart';
 // import 'marker_finder/lib/firebase_options.dart';
 
-
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
 
@@ -26,7 +25,6 @@ class MapPage extends StatefulWidget {
 //   @override
 //   State<ProfilePage> createState() =>
 // }
-
 
 class _MapPageState extends State<MapPage> {
   @override
@@ -108,7 +106,7 @@ class _MapPageState extends State<MapPage> {
     for (var element in _data) {
       double lon_2 = element[8];
       double lat_2 = element[7];
-      double acceptable_dist = 13000.1;
+      double acceptable_dist = 30;
 
       // String erect = element[8];
       // String local = element[16];
@@ -139,7 +137,6 @@ class _MapPageState extends State<MapPage> {
       }
     }
   }
-
 
   void _buttonClickedFunction() {
     _fillCloseLocations();
