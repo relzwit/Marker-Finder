@@ -46,7 +46,7 @@ print(clean_actual_response)
 # df.to_csv("test2.csv", index=False)  # Save the file
 
 df = pd.read_csv("test2.csv")  # Load CSV file
-df.loc[summary][1] = clean_actual_response  # Write the value 10 to column summary, row 5 (zero-indexed)
+df.summary[1] = clean_actual_response  # Write the value 10 to column summary, row 5 (zero-indexed)
 
 
 
