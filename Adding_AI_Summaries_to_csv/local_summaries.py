@@ -5,6 +5,17 @@ import re
 # from subprocess import call
 # from bs4 import BeautifulSoup
 
+
+
+
+# expected flow: 1. open csv, for each website link, run the AI summary prompt on the inscription element
+#     2.store the result into an array
+#     3. create a new column in the csv file called "summary"
+#     4. write the array into the new column in the csv file
+#     5. save the csv file with a new name (test2.csv)
+
+
+
 input = "give me one random word. print a single exclamation mark before the word you choose. print nothing but the exclamation mark and the word"
 
 # articles im reading for help:
@@ -45,11 +56,13 @@ print(clean_actual_response)
 # df['summary'] = "filler"  # Create a new column for summaries
 # df.to_csv("test2.csv", index=False)  # Save the file
 
-df = pd.read_csv("test2.csv")  # Load CSV file
-df.summary[1] = clean_actual_response  # Write the value 10 to column summary, row 5 (zero-indexed)
+# df = pd.read_csv("test2.csv")  # Load CSV file
+# df.summary[1] = clean_actual_response  # Write the value 10 to column summary, row 5 (zero-indexed)
 
 
-
+df = pd.read_csv("test.csv")  # Load CSV file
+df['new_column'] = '"filler"'  # Create a new column for summaries
+df.to_csv("test2.csv", index=False)  # Save the file
 
 
 
