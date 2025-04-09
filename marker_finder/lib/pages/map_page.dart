@@ -19,6 +19,8 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => _MapPageState();
 }
 
+// TODO random test
+
 // class ProfilePage extends StatefulWidget{
 //   const ProfilePage({super.key});
 
@@ -106,7 +108,7 @@ class _MapPageState extends State<MapPage> {
     for (var element in _data) {
       double lon_2 = element[8];
       double lat_2 = element[7];
-      double acceptable_dist = 30;
+      double acceptable_dist = 20000;
 
       // String erect = element[8];
       // String local = element[16];
