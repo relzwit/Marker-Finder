@@ -16,6 +16,7 @@ ToDo:
 - gamification in the form of points for each marker adding to a user level - UNFINISHED
 - switch to the web version of `FlutterMap()` - UNFINISHED
 - marker clustering for improved performance - UNFINISHED
+- clean up naming scheme. still some csv-testing's in some places
 
 
 ;Finished ->
