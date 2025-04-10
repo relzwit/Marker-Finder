@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
-import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:csv/csv.dart';
@@ -15,6 +14,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 // import 'marker_finder/lib/firebase_options.dart';
 
 import '../services/hmdb_scraper.dart';
+import 'profile_page.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -52,14 +52,57 @@ class _MapPageState extends State<MapPage> {
 
   Position? _position;
 
+  // Flag to track if location is being fetched
+  bool _isLoadingLocation = false;
+
   void _getCurrentLocation() async {
-    Position position = await _determinePosition();
+    // Prevent multiple simultaneous location requests
+    if (_isLoadingLocation) return;
 
     setState(() {
-      _position = position;
-      // _loadCSV();
-      // _fillCloseLocations();
+      _isLoadingLocation = true;
     });
+
+    try {
+      Position position = await _determinePosition();
+
+      if (mounted) {
+        setState(() {
+          _position = position;
+          _isLoadingLocation = false;
+          _loadCSV(); // Load CSV after getting location
+        });
+      }
+    } catch (e) {
+      // Only show error if the widget is still mounted
+      if (mounted) {
+        setState(() {
+          _isLoadingLocation = false;
+        });
+
+        // Show error dialog
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Location Error'),
+            content: Text('Could not get your location: $e\n\nPlease check your location permissions and try again.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _getCurrentLocation(); // Try again
+                },
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
   }
 
   Future<Position> _determinePosition() async {
@@ -98,11 +141,32 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _fillCloseLocations() async {
-    print("---close loces fill entered---");
-
     // Clear existing markers and locations
     _closeLocations.clear();
     _markerObjList.clear();
+
+    // Check if position is available
+    if (_position == null) {
+      // Use default location since current location is not available
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Using default location (Tennessee). Enable location for better results.')),
+        );
+      }
+      // Use a default location (Tennessee)
+      _position = Position(
+        latitude: 35.5175,
+        longitude: -86.5804,
+        timestamp: DateTime.now(),
+        accuracy: 0,
+        altitude: 0,
+        heading: 0,
+        speed: 0,
+        speedAccuracy: 0,
+        altitudeAccuracy: 0,
+        headingAccuracy: 0,
+      );
+    }
 
     double myLat = _position!.latitude;
     double myLon = _position!.longitude;
@@ -137,8 +201,9 @@ class _MapPageState extends State<MapPage> {
           _markerObjList.add(MonumentMarker(monument: monument));
         }
       } catch (e) {
-        // Skip invalid entries
-        print('Error processing marker: $e');
+        // Skip invalid entries - silently handle errors
+        // We don't want to interrupt the user experience with error messages for individual markers
+        debugPrint('Error processing marker: $e');
       }
     }
   }
@@ -153,25 +218,27 @@ class _MapPageState extends State<MapPage> {
         monument.inscription = markerData['inscription'];
       });
     } catch (e) {
-      print('Error fetching marker data: $e');
+      debugPrint('Error fetching marker data: $e');
     }
   }
 
-  // void _navigateBottomBar(int index){
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-  // }
+  // Current index for bottom navigation bar
+  int _selectedIndex = 0;
 
-  // final List<Widget> _pages = [
-  //   SecondPage(),
-  // ];
-
-  // int _selectedIndex = 0;
-  // final screens = [
-  //   MapPage(),
-  //   // SecondPage(),
-  // ];
+  // Navigate to the selected page
+  void _navigateBottomBar(int index) {
+    if (index == 1) {
+      // Navigate to profile page
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ProfilePage()),
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -254,37 +321,20 @@ class _MapPageState extends State<MapPage> {
           ),
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _getCurrentLocation,
-      //   child: const Text("update location"),
-      //   // child: const Icon(Icons.location_disabled),
-      // ),
-      //
-      // this method can include multiple floating action buttons:
-      // floatingActionButton:
-      //     Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-      //   FloatingActionButton(
-      //     child: Icon(Icons.location_city),
-      //     onPressed: _buttonClickedFunction,
-      //     heroTag: null,
-      //   ),
-      //   SizedBox(
-      //     height: 10,
-      //   ),
-      //   FloatingActionButton(
-      //     child: Icon(Icons.map),
-      //     onPressed: _testMapLaunch,
-      //     heroTag: null,
-      //   )
-      // ]),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _getCurrentLocation,
+        tooltip: 'Refresh location',
+        child: _isLoadingLocation
+          ? const CircularProgressIndicator(color: Colors.white)
+          : const Icon(Icons.my_location),
+      ),
       bottomNavigationBar: BottomNavigationBar(
-        // currentIndex: _selectedIndex,
-        // onTap: _navigateBottomBar,
+        currentIndex: _selectedIndex,
+        onTap: _navigateBottomBar,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.location_on_outlined),
             label: 'Map',
-            // selectedIndex: index,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_2_outlined),
@@ -338,8 +388,7 @@ class MonumentMarkerPopup extends StatelessWidget {
 
   void _mapLauncher() {
     String location = '${monument.lat}, ${monument.long}';
-    print(location);
-    // MapsLauncher.launchQuery('1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA');
+    debugPrint('Launching maps with location: $location');
     MapsLauncher.launchQuery(location);
   }
 
