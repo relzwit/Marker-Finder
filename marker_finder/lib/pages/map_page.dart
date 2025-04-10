@@ -198,7 +198,7 @@ class _MapPageState extends State<MapPage> {
           _fetchMarkerData(monument);
 
           // Add marker to the list
-          _markerObjList.add(MonumentMarker(monument: monument));
+          _markerObjList.add(MonumentMarker(monument: monument, context: context));
         }
       } catch (e) {
         // Skip invalid entries - silently handle errors
@@ -369,14 +369,19 @@ class Monument {
 }
 
 class MonumentMarker extends Marker {
-  MonumentMarker({required this.monument})
+  MonumentMarker({required this.monument, required BuildContext context})
       : super(
           alignment: Alignment.topCenter,
           height: Monument.size,
           width: Monument.size,
           point: LatLng(monument.lat, monument.long),
-          // child: const Icon(Icons.add_circle_sharp),
-          child: const Icon(Icons.pin_drop_outlined),
+          child: Icon(
+            Icons.pin_drop,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.amber // Use amber in dark mode
+                : Colors.red, // Use red in light mode
+            size: 25,
+          ),
         );
 
   final Monument monument;
@@ -407,12 +412,16 @@ class MonumentMarkerPopup extends StatelessWidget {
     return SizedBox(
       width: 300,
       child: Card(
-        margin: EdgeInsets.symmetric(vertical: 3.0, horizontal: 3.0),
+        margin: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 3.0),
+        elevation: 8.0,
+        color: Theme.of(context).cardColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
           side: BorderSide(
             width: 1.0,
-            color: const Color.fromARGB(255, 64, 58, 2),
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.amber.withAlpha(179)
+                : const Color.fromARGB(255, 64, 58, 2),
           ),
         ),
         child: Column(
@@ -475,23 +484,39 @@ class MonumentMarkerPopup extends StatelessWidget {
                 ElevatedButton(
                   onPressed: _mapLauncher,
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.amber
+                        : Theme.of(context).primaryColor,
+                    foregroundColor: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black
+                        : Colors.white,
                     side: BorderSide(
                       width: 1.2,
-                      color: Colors.black,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.amber.shade800
+                          : Colors.black,
                     ),
                   ),
                   child: const Icon(Icons.directions),
                 ),
-                Text(" "),
+                const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: _launchLink,
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.amber
+                        : Theme.of(context).primaryColor,
+                    foregroundColor: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black
+                        : Colors.white,
                     side: BorderSide(
                       width: 1.2,
-                      color: Colors.black,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.amber.shade800
+                          : Colors.black,
                     ),
                   ),
-                  child: Icon(Icons.info),
+                  child: const Icon(Icons.info),
                 ),
               ],
             ),
