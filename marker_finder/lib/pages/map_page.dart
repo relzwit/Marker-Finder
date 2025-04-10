@@ -85,7 +85,8 @@ class _MapPageState extends State<MapPage> {
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('Location Error'),
-            content: Text('Could not get your location: $e\n\nPlease check your location permissions and try again.'),
+            content: Text(
+                'Could not get your location: $e\n\nPlease check your location permissions and try again.'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
@@ -150,7 +151,9 @@ class _MapPageState extends State<MapPage> {
       // Use default location since current location is not available
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Using default location (Tennessee). Enable location for better results.')),
+          const SnackBar(
+              content: Text(
+                  'Using default location (Tennessee). Enable location for better results.')),
         );
       }
       // Use a default location (Tennessee)
@@ -198,7 +201,8 @@ class _MapPageState extends State<MapPage> {
           _fetchMarkerData(monument);
 
           // Add marker to the list
-          _markerObjList.add(MonumentMarker(monument: monument, context: context));
+          _markerObjList
+              .add(MonumentMarker(monument: monument, context: context));
         }
       } catch (e) {
         // Skip invalid entries - silently handle errors
@@ -325,8 +329,8 @@ class _MapPageState extends State<MapPage> {
         onPressed: _getCurrentLocation,
         tooltip: 'Refresh location',
         child: _isLoadingLocation
-          ? const CircularProgressIndicator(color: Colors.white)
-          : const Icon(Icons.my_location),
+            ? const CircularProgressIndicator(color: Colors.white)
+            : const Icon(Icons.my_location),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -378,8 +382,9 @@ class MonumentMarker extends Marker {
           child: Icon(
             Icons.pin_drop,
             color: Theme.of(context).brightness == Brightness.dark
-                ? Colors.amber // Use amber in dark mode
-                : Colors.red, // Use red in light mode
+                //marker color based on mode
+                ? const Color.fromARGB(255, 0, 0, 0) // Use amber in dark mode
+                : const Color.fromARGB(255, 0, 0, 0), // Use red in light mode
             size: 25,
           ),
         );
@@ -420,8 +425,8 @@ class MonumentMarkerPopup extends StatelessWidget {
           side: BorderSide(
             width: 1.0,
             color: Theme.of(context).brightness == Brightness.dark
-                ? Colors.amber.withAlpha(179)
-                : const Color.fromARGB(255, 64, 58, 2),
+                ? const Color.fromARGB(255, 77, 7, 255).withAlpha(179)
+                : const Color.fromARGB(255, 173, 157, 10),
           ),
         ),
         child: Column(
@@ -484,12 +489,14 @@ class MonumentMarkerPopup extends StatelessWidget {
                 ElevatedButton(
                   onPressed: _mapLauncher,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.amber
-                        : Theme.of(context).primaryColor,
-                    foregroundColor: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.black
-                        : Colors.white,
+                    backgroundColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.amber
+                            : Theme.of(context).primaryColor,
+                    foregroundColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black
+                            : Colors.white,
                     side: BorderSide(
                       width: 1.2,
                       color: Theme.of(context).brightness == Brightness.dark
@@ -503,12 +510,14 @@ class MonumentMarkerPopup extends StatelessWidget {
                 ElevatedButton(
                   onPressed: _launchLink,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.amber
-                        : Theme.of(context).primaryColor,
-                    foregroundColor: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.black
-                        : Colors.white,
+                    backgroundColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.amber
+                            : Theme.of(context).primaryColor,
+                    foregroundColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black
+                            : Colors.white,
                     side: BorderSide(
                       width: 1.2,
                       color: Theme.of(context).brightness == Brightness.dark
