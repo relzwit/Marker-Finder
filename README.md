@@ -1,4 +1,4 @@
-# senior-project
+# Marker Finder
 
 This is an app targeted at high school teachers in order to aid them in getting their students engaged in learning about their local history. 
 The app allows students to see the historical markers in their area and prove that they have visited them in person.
