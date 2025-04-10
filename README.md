@@ -7,6 +7,7 @@ The app allows students to see the historical markers in their area and prove th
 
 ToDo:
 - change map focus when the user's position is discovered (main priority kinda, looks kinda jank if this doesnt work)
+- fix the page routing. istg, this shit is so screwed up...
 
 - supplement CSV files with 2 sentence AI inscription summaries
     - use the AI summary in the text area on the popups

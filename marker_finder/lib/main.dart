@@ -19,3 +19,20 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+// initial attempts at proper routing
+// class MapPage extends StatelessWidget {
+//   const MapPage({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Marker Finder'),
+//       ),
+//       body: const Center(
+//         child: Text('Map Page'),
+//       ),
+//     );
+//   }
+// }
