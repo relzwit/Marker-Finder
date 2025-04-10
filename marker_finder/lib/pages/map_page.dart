@@ -264,6 +264,7 @@ class _MapPageState extends State<MapPage> {
               DropdownMenuEntry(value: "hmdb_usa_ga.csv", label: 'Georgia'),
               DropdownMenuEntry(value: "hmdb_usa_ala.csv", label: 'Alabama'),
               DropdownMenuEntry(value: "hmdb_ger.csv", label: 'Germany'),
+              DropdownMenuEntry(value: "hmdb_eng.csv", label: 'England'),
             ],
           )
         ],

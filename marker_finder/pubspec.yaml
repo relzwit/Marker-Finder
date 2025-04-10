@@ -90,6 +90,7 @@ flutter:
     - assets/CSVs/hmdb_usa_tn.csv
     - assets/CSVs/hmdb_usa_ala.csv
     - assets/CSVs/hmdb_usa_ga.csv
+    - assets/CSVs/hmdb_eng.csv
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
