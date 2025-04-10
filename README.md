@@ -5,9 +5,7 @@ The app allows students to see the historical markers in their area and prove th
 
 
 
-;ToDo ->
-
-features in progress:
+ToDo:
 - change location on tap
 - load diff csv based on location
     - need to change code execution sequence. 
