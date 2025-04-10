@@ -82,8 +82,11 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/mycsv.csv
-    - assets/hmdb.csv
+    - assets/CSVs/hmdb_ger.csv
+    - assets/CSVs/hmdb_usa_tn.csv
+    - assets/CSVs/hmdb_usa_ala.csv
+    - assets/CSVs/hmdb_usa_ga.csv
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -94,9 +94,8 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _loadCSV() async {
-    final rawData = await rootBundle.loadString("assets/hmdb.csv");
-    List<List<dynamic>> listData =
-        const CsvToListConverter().convert(rawData);
+    final rawData = await rootBundle.loadString("assets/CSVs/hmdb_usa_tn.csv");
+    List<List<dynamic>> listData = const CsvToListConverter().convert(rawData);
     setState(() {
       _data = listData;
       _data.removeAt(0); // remove top line of csv
@@ -123,7 +122,8 @@ class _MapPageState extends State<MapPage> {
         String markerLink = element[16];
 
         // Check if marker is within acceptable distance
-        if (Geolocator.distanceBetween(myLat, myLon, lat, lon) < acceptableDist) {
+        if (Geolocator.distanceBetween(myLat, myLon, lat, lon) <
+            acceptableDist) {
           _closeLocations.add(element);
 
           // Create monument object
@@ -151,7 +151,8 @@ class _MapPageState extends State<MapPage> {
   // Fetch marker data (image and inscription) from HMDB website
   void _fetchMarkerData(Monument monument) async {
     try {
-      final markerData = await HmdbScraper.getMarkerData(monument.link.toString());
+      final markerData =
+          await HmdbScraper.getMarkerData(monument.link.toString());
       setState(() {
         monument.imageUrl = markerData['imageUrl'];
         monument.inscription = markerData['inscription'];
@@ -160,8 +161,6 @@ class _MapPageState extends State<MapPage> {
       print('Error fetching marker data: $e');
     }
   }
-
-
 
   // void _navigateBottomBar(int index){
   //   setState(() {
@@ -182,6 +181,21 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Marker Finder'),
+        actions: <Widget>[
+          DropdownButton<String>(
+            items: <String>['Tennessee', 'Germany', 'Alabama', 'Georgia']
+                .map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (_) {},
+          )
+        ],
+      ),
       backgroundColor: Color.fromARGB(0, 53, 53, 205),
       // body: _pages[_selectedIndex]
       body: FlutterMap(
@@ -199,13 +213,6 @@ class _MapPageState extends State<MapPage> {
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
           ),
           CurrentLocationLayer(),
-          Text(
-            "Marker Mapper",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 25,
-            ),
-          ),
           // Use MarkerClusterLayerWidget for better performance with many markers
           MarkerClusterLayerWidget(
             options: MarkerClusterLayerOptions(
@@ -368,7 +375,8 @@ class MonumentMarkerPopup extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 monument.name,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
             ),
