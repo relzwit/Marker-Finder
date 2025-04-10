@@ -21,7 +21,6 @@ class MyApp extends StatelessWidget {
 }
 
 // //TODO:       1. marker clustering
-// //TODO:       2. fix bug where button needs to be doubleclicked
 // //TODO:       4. USE ID TO LINK THE CORRECT IMAGE TO THE POPUP BUILDER
 // //TODO:       5. look into error page for fluttermap
 // //TODO:       6. swap to flutter_map_cancellable_tile_provider?
