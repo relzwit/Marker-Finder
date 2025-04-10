@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
+import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
@@ -9,8 +10,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 // import 'firebase_options.dart';
 // import 'marker_finder/lib/firebase_options.dart';
+
+import '../services/hmdb_scraper.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -45,14 +49,14 @@ class _MapPageState extends State<MapPage> {
   final MapController mapController = MapController();
   final PopupController _popupLayerController = PopupController();
 
-  // ? raw csv lines i think
+  // Raw CSV data
   List<List<dynamic>> _data = [];
 
-  // list of locations within the specified radius
-  List<List<dynamic>> _closeLocations = [];
+  // List of locations within the specified radius
+  final List<List<dynamic>> _closeLocations = [];
 
-  // this will be filled with the marker objects for the markers listed in _closeLocations
-  List<Marker> _marker_obj_list = [];
+  // List of marker objects for the markers listed in _closeLocations
+  final List<Marker> _markerObjList = [];
 
   Position? _position;
 
@@ -90,11 +94,11 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _loadCSV() async {
-    final _rawData = await rootBundle.loadString("assets/hmdb.csv");
-    List<List<dynamic>> _listData =
-        const CsvToListConverter().convert(_rawData);
+    final rawData = await rootBundle.loadString("assets/hmdb.csv");
+    List<List<dynamic>> listData =
+        const CsvToListConverter().convert(rawData);
     setState(() {
-      _data = _listData;
+      _data = listData;
       _data.removeAt(0); // remove top line of csv
     });
   }
@@ -102,59 +106,62 @@ class _MapPageState extends State<MapPage> {
   void _fillCloseLocations() async {
     print("---close loces fill entered---");
 
-    double my_lat = _position!.latitude;
-    double my_lon = _position!.longitude;
+    // Clear existing markers and locations
+    _closeLocations.clear();
+    _markerObjList.clear();
+
+    double myLat = _position!.latitude;
+    double myLon = _position!.longitude;
+    double acceptableDist = 20000; // 20km radius
 
     for (var element in _data) {
-      double lon_2 = element[8];
-      double lat_2 = element[7];
-      double acceptable_dist = 20000;
+      try {
+        double lon = element[8];
+        double lat = element[7];
+        String markerName = element[2];
+        int markerId = element[0];
+        String markerLink = element[16];
 
-      // String erect = element[8];
-      // String local = element[16];
-      //wrong indeces
+        // Check if marker is within acceptable distance
+        if (Geolocator.distanceBetween(myLat, myLon, lat, lon) < acceptableDist) {
+          _closeLocations.add(element);
 
-      // print("ererct: $erect");
-      // print("location is: $local");
-      // distance in Kilometers
-      // need to catch the error if there is
-      // nothing within the selected distance
-      if (Geolocator.distanceBetween(my_lat, my_lon, lat_2, lon_2) <
-          acceptable_dist) {
-        _closeLocations.add(element);
-        _marker_obj_list.add(MonumentMarker(
-            // adds the marker to the marker obj list
-            monument: Monument(
-          name: element[2],
-          //imagePath: 'assets/imgs/an_elephant.jpg', // default image
-          //imagePath: Image.network(
-          //'https://www.hmdb.org/Photos7/703/Photo703003o.jpg?129202350700PM'),
-          lat: element[7],
-          long: element[8],
-          id: element[0],
-          link: Uri.parse(element[16]),
-          // erectedBy: element[8],
-          // location: element[16],
-        )));
+          // Create monument object
+          Monument monument = Monument(
+            name: markerName,
+            lat: lat,
+            long: lon,
+            id: markerId,
+            link: Uri.parse(markerLink),
+          );
+
+          // Fetch marker data from HMDB website
+          _fetchMarkerData(monument);
+
+          // Add marker to the list
+          _markerObjList.add(MonumentMarker(monument: monument));
+        }
+      } catch (e) {
+        // Skip invalid entries
+        print('Error processing marker: $e');
       }
     }
   }
 
-  void _buttonClickedFunction() {
-    _fillCloseLocations();
-    int len_of_list = _closeLocations.length;
-    print("_closeLocations list size is:  $len_of_list");
-    setState(() {
-      // _fillCloseLocations();
-      // int len_of_list = _closeLocations.length;
-      // print("_closeLocations list size is:  $len_of_list");
-    }); // tells flutter to schedule a rebuild after the button click stuff finishes
+  // Fetch marker data (image and inscription) from HMDB website
+  void _fetchMarkerData(Monument monument) async {
+    try {
+      final markerData = await HmdbScraper.getMarkerData(monument.link.toString());
+      setState(() {
+        monument.imageUrl = markerData['imageUrl'];
+        monument.inscription = markerData['inscription'];
+      });
+    } catch (e) {
+      print('Error fetching marker data: $e');
+    }
   }
 
-  void _testMapLaunch() {
-    // MapsLauncher.launchQuery('1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA');
-    MapsLauncher.launchQuery('16, 35');
-  }
+
 
   // void _navigateBottomBar(int index){
   //   setState(() {
@@ -199,9 +206,33 @@ class _MapPageState extends State<MapPage> {
               fontSize: 25,
             ),
           ),
+          // Use MarkerClusterLayerWidget for better performance with many markers
+          MarkerClusterLayerWidget(
+            options: MarkerClusterLayerOptions(
+              maxClusterRadius: 45,
+              size: const Size(40, 40),
+              markers: _markerObjList,
+              builder: (context, markers) {
+                return Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.blue.withAlpha(179),
+                  ),
+                  child: Center(
+                    child: Text(
+                      markers.length.toString(),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+
+          // Popup layer for marker popups
           PopupMarkerLayer(
             options: PopupMarkerLayerOptions(
-              markers: _marker_obj_list,
+              markers: _markerObjList,
               popupController: _popupLayerController,
               popupDisplayOptions: PopupDisplayOptions(
                 builder: (_, Marker marker) {
@@ -262,19 +293,21 @@ class Monument {
 
   Monument({
     required this.name,
-    //required this.imagePath,
     required this.lat,
     required this.long,
     required this.id,
     required this.link,
+    this.imageUrl,
+    this.inscription,
   });
 
   final String name;
-  //final Widget imagePath;
   final Uri link;
   final double lat;
   final double long;
   final int id; //already parsed url
+  String? imageUrl; // URL to the marker image
+  String? inscription; // Inscription text from the marker
 }
 
 class MonumentMarker extends Marker {
@@ -296,7 +329,7 @@ class MonumentMarkerPopup extends StatelessWidget {
   final Monument monument;
 
   void _mapLauncher() {
-    String location = monument.lat.toString() + ', ' + monument.long.toString();
+    String location = '${monument.lat}, ${monument.long}';
     print(location);
     // MapsLauncher.launchQuery('1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA');
     MapsLauncher.launchQuery(location);
@@ -330,20 +363,54 @@ class MonumentMarkerPopup extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            // Image.network(monument.imagePath, width: 200),
-            Text(monument.name),
-            Text("      "),
-            Row(children: <Widget>[
-              Text(" "),
-              Flexible(
-                child: Text(
-                    "Inscription: Lorem ipsum dolor sit Lorem ipsum dolor sit "),
+            // Display marker name with larger font
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                monument.name,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
               ),
-              // Text(" "),
-              // Text("Inscription: Lorem ipsum dolor sit Lorem ipsum dolor sit "),
-              // Text(" "),
-            ]),
-            Text("      "),
+            ),
+
+            // Display marker image if available
+            if (monument.imageUrl != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: CachedNetworkImage(
+                  imageUrl: monument.imageUrl!,
+                  width: 250,
+                  height: 150,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
+              ),
+
+            // Display inscription if available
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Inscription:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    monument.inscription ?? 'Loading inscription...',
+                    style: const TextStyle(fontSize: 12),
+                    maxLines: 6,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 8),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
