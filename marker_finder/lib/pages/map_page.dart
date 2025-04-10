@@ -23,20 +23,11 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => _MapPageState();
 }
 
-// TODO random test
-
-// class ProfilePage extends StatefulWidget{
-//   const ProfilePage({super.key});
-
-//   @override
-//   State<ProfilePage> createState() =>
-// }
-
 class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
-    _loadCSV();
+    // _loadCSV();
     _getCurrentLocation();
   }
 
@@ -48,6 +39,7 @@ class _MapPageState extends State<MapPage> {
 
   final MapController mapController = MapController();
   final PopupController _popupLayerController = PopupController();
+  String _selectedCSV = "assets/CSVs/hmdb_usa_tn.csv";
 
   // Raw CSV data
   List<List<dynamic>> _data = [];
@@ -65,7 +57,8 @@ class _MapPageState extends State<MapPage> {
 
     setState(() {
       _position = position;
-      _fillCloseLocations();
+      // _loadCSV();
+      // _fillCloseLocations();
     });
   }
 
@@ -94,11 +87,13 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _loadCSV() async {
-    final rawData = await rootBundle.loadString("assets/CSVs/hmdb_usa_tn.csv");
+    final rawData = await rootBundle.loadString(_selectedCSV);
+    // final rawData = await rootBundle.loadString("assets/CSVs/hmdb_usa_tn.csv");
     List<List<dynamic>> listData = const CsvToListConverter().convert(rawData);
     setState(() {
       _data = listData;
       _data.removeAt(0); // remove top line of csv
+      _fillCloseLocations();
     });
   }
 
@@ -183,16 +178,22 @@ class _MapPageState extends State<MapPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Marker Finder'),
-        actions: <Widget>[
-          DropdownButton<String>(
-            items: <String>['Tennessee', 'Germany', 'Alabama', 'Georgia']
-                .map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (_) {},
+        actions: [
+          DropdownMenu(
+            enableFilter: true,
+            label: const Text("Select Region"),
+            onSelected: (region) {
+              setState(() {
+                _selectedCSV = "assets/CSVs/$region";
+                _loadCSV();
+              });
+            },
+            dropdownMenuEntries: <DropdownMenuEntry>[
+              DropdownMenuEntry(value: "hmdb_usa_tn.csv", label: 'Tennessee'),
+              DropdownMenuEntry(value: "hmdb_usa_ga.csv", label: 'Georgia'),
+              DropdownMenuEntry(value: "hmdb_usa_ala.csv", label: 'Alabama'),
+              DropdownMenuEntry(value: "hmdb_ger.csv", label: 'Germany'),
+            ],
           )
         ],
       ),
