@@ -181,7 +181,7 @@ class _MapPageState extends State<MapPage> {
         actions: [
           DropdownMenu(
             enableFilter: true,
-            label: const Text("Select Region"),
+            label: const Text("Select a region"),
             onSelected: (region) {
               setState(() {
                 _selectedCSV = "assets/CSVs/$region";
