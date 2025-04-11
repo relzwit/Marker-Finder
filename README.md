@@ -108,14 +108,10 @@ The following features are planned for future development:
 
 
 
+## ToDo List
 
-Completed Items:
- Marker clustering for improved performance (implemented and documented in README)
- Change location on tap (implemented via the draggable explorer)
- Set initial map center to user location (implemented in the location detection)
-Items Still To Do:
- Change map focus when the user's position is discovered
- Fix the page routing
- Supplement CSV files with AI inscription summaries
- Popup picture scraped from the HMDB link
- Gamification with points and user levels
+- Supplement CSV files with 2 sentence AI inscription summaries
+    - Use the AI summary in the text area on the popups
+- Popup picture scraped from the hmdb link
+- Gamification in the form of points for each marker adding to a user level
+- ✅ Marker clustering for improved performance
