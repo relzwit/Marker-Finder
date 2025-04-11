@@ -16,6 +16,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import '../services/hmdb_scraper.dart';
 import '../services/settings_service.dart';
+import '../services/region_service.dart';
 import '../widgets/custom_location_layer.dart';
 import '../widgets/draggable_explorer.dart';
 import 'profile_page.dart';
@@ -174,6 +175,30 @@ class _MapPageState extends State<MapPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Loading markers...')),
         );
+      }
+
+      // Automatically determine the best region based on current position
+      if (_position != null) {
+        String closestRegionFile = RegionService.determineClosestRegion(
+          _position!.latitude,
+          _position!.longitude
+        );
+
+        // Only update if different from current selection
+        if (_selectedCSV != "assets/CSVs/$closestRegionFile") {
+          setState(() {
+            _selectedCSV = "assets/CSVs/$closestRegionFile";
+          });
+
+          // Show which region was selected
+          String regionName = RegionService.getRegionNameFromFile(closestRegionFile);
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Automatically selected region: $regionName')),
+            );
+          }
+          debugPrint('Automatically selected region: $regionName');
+        }
       }
 
       final rawData = await rootBundle.loadString(_selectedCSV);
@@ -519,23 +544,56 @@ class _MapPageState extends State<MapPage> {
               ),
             ),
           ),
-          DropdownMenu(
-            enableFilter: true,
-            label: const Text("Select a region"),
-            onSelected: (region) {
+          // Show current region
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                _selectedCSV.isEmpty ? '' :
+                  'Region: ${RegionService.getRegionNameFromFile(_selectedCSV.split('/').last)}',
+                style: const TextStyle(fontSize: 12),
+              ),
+            ),
+          ),
+          // Region selector in a menu button
+          PopupMenuButton<String>(
+            tooltip: 'Manually select region',
+            icon: const Icon(Icons.map),
+            onSelected: (String region) {
               setState(() {
                 _selectedCSV = "assets/CSVs/$region";
                 _loadCSV();
               });
             },
-            dropdownMenuEntries: <DropdownMenuEntry>[
-              DropdownMenuEntry(value: "hmdb_usa_tn.csv", label: 'Tennessee'),
-              DropdownMenuEntry(value: "hmdb_usa_ga.csv", label: 'Georgia'),
-              DropdownMenuEntry(value: "hmdb_usa_ala.csv", label: 'Alabama'),
-              DropdownMenuEntry(value: "hmdb_ger.csv", label: 'Germany'),
-              DropdownMenuEntry(value: "hmdb_eng.csv", label: 'England'),
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: '',
+                enabled: false,
+                child: Text('Select Region', style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+              const PopupMenuDivider(),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_tn.csv',
+                child: Text('Tennessee'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_ga.csv',
+                child: Text('Georgia'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_ala.csv',
+                child: Text('Alabama'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_ger.csv',
+                child: Text('Germany'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_eng.csv',
+                child: Text('England'),
+              ),
             ],
-          )
+          ),
         ],
       ),
       backgroundColor: Color.fromARGB(0, 53, 53, 205),
