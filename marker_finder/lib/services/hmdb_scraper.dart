@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart';
+import 'package:flutter/foundation.dart';
 
 class HmdbScraper {
   /// Fetches the image URL and inscription text from an HMDB marker page
@@ -9,15 +10,15 @@ class HmdbScraper {
     try {
       // Make HTTP request to the HMDB page
       final response = await http.get(Uri.parse(url));
-      
+
       if (response.statusCode != 200) {
-        print('Failed to load page: ${response.statusCode}');
+        debugPrint('Failed to load page: ${response.statusCode}');
         return {'imageUrl': null, 'inscription': null};
       }
-      
+
       // Parse the HTML document
       Document document = parser.parse(response.body);
-      
+
       // Extract the image URL
       String? imageUrl;
       try {
@@ -35,9 +36,9 @@ class HmdbScraper {
           }
         }
       } catch (e) {
-        print('Error extracting image: $e');
+        debugPrint('Error extracting image: $e');
       }
-      
+
       // Extract the inscription text
       String? inscription;
       try {
@@ -56,29 +57,29 @@ class HmdbScraper {
           }
         }
       } catch (e) {
-        print('Error extracting inscription: $e');
+        debugPrint('Error extracting inscription: $e');
       }
-      
+
       return {
         'imageUrl': imageUrl,
         'inscription': inscription ?? 'No inscription available'
       };
     } catch (e) {
-      print('Error scraping marker data: $e');
+      debugPrint('Error scraping marker data: $e');
       return {'imageUrl': null, 'inscription': 'Error loading data'};
     }
   }
-  
+
   /// Caches the results to avoid repeated network requests
   static final Map<String, Map<String, String?>> _cache = {};
-  
+
   /// Gets marker data with caching
   static Future<Map<String, String?>> getMarkerData(String url) async {
     // Check if data is already in cache
     if (_cache.containsKey(url)) {
       return _cache[url]!;
     }
-    
+
     // Fetch data and store in cache
     final data = await scrapeMarkerData(url);
     _cache[url] = data;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/theme_provider.dart';
+import '../services/settings_service.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -39,6 +40,20 @@ class _ProfilePageState extends State<ProfilePage> {
     _usernameController = TextEditingController(text: username);
     _emailController = TextEditingController(text: email);
     _bioController = TextEditingController(text: bio);
+
+    // Load saved search radius
+    _loadSearchRadius();
+  }
+
+  // Load search radius from shared preferences
+  Future<void> _loadSearchRadius() async {
+    final radius = await SettingsService.getSearchRadius();
+    if (mounted) {
+      setState(() {
+        searchRadius = radius;
+      });
+      debugPrint('ProfilePage: Loaded radius: $radius km');
+    }
   }
 
   @override
@@ -113,55 +128,104 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Show dialog to edit search radius
   void _showRadiusSettingDialog() {
-    TextEditingController radiusController = TextEditingController(text: searchRadius.toString());
+    // Create a local copy of the radius value for the dialog
+    double dialogRadius = searchRadius;
+    TextEditingController radiusController = TextEditingController(text: dialogRadius.toStringAsFixed(1));
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Search Radius'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Set the radius (in km) for finding nearby markers:'),
-            const SizedBox(height: 16),
-            TextField(
-              controller: radiusController,
-              decoration: const InputDecoration(
-                labelText: 'Radius (km)',
-                border: OutlineInputBorder(),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          return AlertDialog(
+            title: const Text('Search Radius'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Set the radius (in km) for finding nearby markers:'),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: radiusController,
+                  decoration: const InputDecoration(
+                    labelText: 'Radius (km)',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    // Update slider when text changes
+                    final newValue = double.tryParse(value);
+                    if (newValue != null && newValue >= 5 && newValue <= 50) {
+                      setDialogState(() {
+                        dialogRadius = newValue;
+                      });
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('5 km'),
+                    Text('${dialogRadius.toStringAsFixed(1)} km'),
+                    const Text('50 km'),
+                  ],
+                ),
+                Slider(
+                  value: dialogRadius,
+                  min: 5,
+                  max: 50,
+                  divisions: 45, // More divisions for smoother sliding
+                  label: dialogRadius.toStringAsFixed(1),
+                  onChanged: (value) {
+                    setDialogState(() {
+                      dialogRadius = value;
+                      radiusController.text = value.toStringAsFixed(1);
+                    });
+                  },
+                  onChangeEnd: (value) {
+                    // Only update if the value has actually changed
+                    if (value != searchRadius) {
+                      setState(() {
+                        searchRadius = value;
+                      });
+                      // Save to shared preferences
+                      SettingsService.saveSearchRadius(value);
+
+                      // Radius change is handled by SettingsService stream
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Radius updated to ${value.toStringAsFixed(1)} km')),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
               ),
-              keyboardType: TextInputType.number,
-            ),
-            Slider(
-              value: searchRadius,
-              min: 5,
-              max: 50,
-              divisions: 9,
-              label: searchRadius.round().toString(),
-              onChanged: (value) {
-                setState(() {
-                  searchRadius = value;
-                  radiusController.text = value.toString();
-                });
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() {
-                searchRadius = double.tryParse(radiusController.text) ?? 20.0;
-              });
-              Navigator.pop(context);
-            },
-            child: const Text('Save'),
-          ),
-        ],
+              TextButton(
+                onPressed: () {
+                  final newRadius = double.tryParse(radiusController.text) ?? 20.0;
+                  setState(() {
+                    searchRadius = newRadius;
+                  });
+                  // Save to shared preferences
+                  SettingsService.saveSearchRadius(newRadius);
+
+                  // Radius change is handled by SettingsService stream
+
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Search radius updated to ${newRadius.toStringAsFixed(1)} km')),
+                  );
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -427,8 +491,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   icon: const Icon(Icons.save),
                   label: const Text("Save Settings"),
                   onPressed: () {
+                    // Save radius to shared preferences
+                    SettingsService.saveSearchRadius(searchRadius);
+
+                    // Radius change is handled by SettingsService stream
+
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Settings saved successfully")),
+                      const SnackBar(content: Text("Settings saved and applied")),
                     );
                   },
                 ),
@@ -457,7 +526,26 @@ class _ProfilePageState extends State<ProfilePage> {
                     leading: const Icon(Icons.radar),
                     title: const Text("Search Radius"),
                     subtitle: Text("${searchRadius.toStringAsFixed(1)} km"),
-                    trailing: const Icon(Icons.edit),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.refresh),
+                          tooltip: 'Apply radius and refresh map',
+                          onPressed: () {
+                            // Save radius and show confirmation
+                            SettingsService.saveSearchRadius(searchRadius);
+
+                            // Radius change is handled by SettingsService stream
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Radius applied and map refreshed')),
+                            );
+                          },
+                        ),
+                        const Icon(Icons.edit),
+                      ],
+                    ),
                     onTap: _showRadiusSettingDialog,
                   ),
                   const Divider(height: 1),
