@@ -1,7 +1,5 @@
 # Marker Finder
 
-# Marker Finder
-
 A Flutter application for discovering and exploring historical markers on a map.
 
 ## Overview
@@ -114,4 +112,5 @@ The following features are planned for future development:
     - Use the AI summary in the text area on the popups
 - Popup picture scraped from the hmdb link
 - Gamification in the form of points for each marker adding to a user level
+- Add remaining CSVs
 - ✅ Marker clustering for improved performance
