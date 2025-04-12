@@ -72,7 +72,7 @@ class _MapPageState extends State<MapPage> {
   // Map controller - will be initialized when the map is created
   late final MapController mapController;
   final PopupController _popupLayerController = PopupController();
-  String _selectedCSV = "assets/CSVs/hmdb_usa_tn.csv";
+  String _selectedCSV = "assets/CSVs/hmdb_usa_tennessee.csv";
 
   // Raw CSV data
   List<List<dynamic>> _data = [];
@@ -180,9 +180,7 @@ class _MapPageState extends State<MapPage> {
       // Automatically determine the best region based on current position
       if (_position != null) {
         String closestRegionFile = RegionService.determineClosestRegion(
-          _position!.latitude,
-          _position!.longitude
-        );
+            _position!.latitude, _position!.longitude);
 
         // Only update if different from current selection
         if (_selectedCSV != "assets/CSVs/$closestRegionFile") {
@@ -191,10 +189,12 @@ class _MapPageState extends State<MapPage> {
           });
 
           // Show which region was selected
-          String regionName = RegionService.getRegionNameFromFile(closestRegionFile);
+          String regionName =
+              RegionService.getRegionNameFromFile(closestRegionFile);
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Automatically selected region: $regionName')),
+              SnackBar(
+                  content: Text('Automatically selected region: $regionName')),
             );
           }
           debugPrint('Automatically selected region: $regionName');
@@ -202,7 +202,8 @@ class _MapPageState extends State<MapPage> {
       }
 
       final rawData = await rootBundle.loadString(_selectedCSV);
-      List<List<dynamic>> listData = const CsvToListConverter().convert(rawData);
+      List<List<dynamic>> listData =
+          const CsvToListConverter().convert(rawData);
 
       if (mounted) {
         setState(() {
@@ -273,7 +274,7 @@ class _MapPageState extends State<MapPage> {
 
       // Get the search radius from settings (in km, convert to meters)
       double acceptableDist = await SettingsService.getSearchRadius() * 1000;
-      debugPrint('Using search radius: ${acceptableDist/1000} km');
+      debugPrint('Using search radius: ${acceptableDist / 1000} km');
 
       // Create a list to store markers with their distances
       List<Map<String, dynamic>> markersWithDistance = [];
@@ -317,7 +318,8 @@ class _MapPageState extends State<MapPage> {
       }
 
       // Sort markers by distance (closest first)
-      markersWithDistance.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
+      markersWithDistance.sort((a, b) =>
+          (a['distance'] as double).compareTo(b['distance'] as double));
 
       // Limit the number of markers to display
       int markersToShow = markersWithDistance.length > _maxMarkersToDisplay
@@ -343,25 +345,29 @@ class _MapPageState extends State<MapPage> {
 
         // Add marker to the list
         if (mounted) {
-          _markerObjList.add(MonumentMarker(monument: monument, context: context));
+          _markerObjList
+              .add(MonumentMarker(monument: monument, context: context));
         }
 
         // Debug info for first few markers
         if (i < 3) {
-          debugPrint('Added marker: ${markerData['name']} at distance: ${(markerData['distance']/1000).toStringAsFixed(2)} km');
+          debugPrint(
+              'Added marker: ${markerData['name']} at distance: ${(markerData['distance'] / 1000).toStringAsFixed(2)} km');
         }
       }
 
       // Double-check that all markers are within the radius
       debugPrint('Before filtering: ${markersWithDistance.length} markers');
-      markersWithDistance = markersWithDistance.where((marker) =>
-        (marker['distance'] as double) <= acceptableDist
-      ).toList();
-      debugPrint('After strict filtering: ${markersWithDistance.length} markers');
+      markersWithDistance = markersWithDistance
+          .where((marker) => (marker['distance'] as double) <= acceptableDist)
+          .toList();
+      debugPrint(
+          'After strict filtering: ${markersWithDistance.length} markers');
 
       // Show summary message
       int totalMarkersInRange = markersWithDistance.length;
-      debugPrint('Found $totalMarkersInRange markers within ${acceptableDist/1000} km radius');
+      debugPrint(
+          'Found $totalMarkersInRange markers within ${acceptableDist / 1000} km radius');
       debugPrint('Displaying $markersToShow markers for better performance');
 
       if (mounted) {
@@ -370,7 +376,8 @@ class _MapPageState extends State<MapPage> {
         });
 
         if (totalMarkersInRange > 0) {
-          String message = 'Found $totalMarkersInRange markers within ${(acceptableDist/1000).toStringAsFixed(1)} km';
+          String message =
+              'Found $totalMarkersInRange markers within ${(acceptableDist / 1000).toStringAsFixed(1)} km';
           if (totalMarkersInRange > _maxMarkersToDisplay) {
             message += ' (showing $markersToShow for performance)';
           }
@@ -380,7 +387,9 @@ class _MapPageState extends State<MapPage> {
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('No markers found within ${(acceptableDist/1000).toStringAsFixed(1)} km. Try increasing the radius in Profile settings.')),
+            SnackBar(
+                content: Text(
+                    'No markers found within ${(acceptableDist / 1000).toStringAsFixed(1)} km. Try increasing the radius in Profile settings.')),
           );
         }
       }
@@ -463,21 +472,22 @@ class _MapPageState extends State<MapPage> {
 
     // Calculate distance between last center and new center
     double distanceInMeters = Geolocator.distanceBetween(
-      _lastMapCenter!.latitude,
-      _lastMapCenter!.longitude,
-      newCenter.latitude,
-      newCenter.longitude
-    );
+        _lastMapCenter!.latitude,
+        _lastMapCenter!.longitude,
+        newCenter.latitude,
+        newCenter.longitude);
 
     // If moved significantly, update the position and reload markers after debounce
     if (distanceInMeters > _minMapMoveDistance) {
-      debugPrint('Map moved significantly: ${(distanceInMeters/1000).toStringAsFixed(2)} km');
+      debugPrint(
+          'Map moved significantly: ${(distanceInMeters / 1000).toStringAsFixed(2)} km');
 
       // Cancel any existing timer
       _mapMovementDebounceTimer?.cancel();
 
       // Set a new timer to load markers after movement stops
-      _mapMovementDebounceTimer = Timer(Duration(milliseconds: _debounceTimeMs), () {
+      _mapMovementDebounceTimer =
+          Timer(Duration(milliseconds: _debounceTimeMs), () {
         if (mounted) {
           // Update the position to the new map center
           _position = Position(
@@ -549,8 +559,9 @@ class _MapPageState extends State<MapPage> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Text(
-                _selectedCSV.isEmpty ? '' :
-                  'Region: ${RegionService.getRegionNameFromFile(_selectedCSV.split('/').last)}',
+                _selectedCSV.isEmpty
+                    ? ''
+                    : 'Region: ${RegionService.getRegionNameFromFile(_selectedCSV.split('/').last)}',
                 style: const TextStyle(fontSize: 12),
               ),
             ),
@@ -569,21 +580,10 @@ class _MapPageState extends State<MapPage> {
               const PopupMenuItem<String>(
                 value: '',
                 enabled: false,
-                child: Text('Select Region', style: TextStyle(fontWeight: FontWeight.bold)),
+                child: Text('Select Region',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
               ),
               const PopupMenuDivider(),
-              const PopupMenuItem<String>(
-                value: 'hmdb_usa_tn.csv',
-                child: Text('Tennessee'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'hmdb_usa_ga.csv',
-                child: Text('Georgia'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'hmdb_usa_ala.csv',
-                child: Text('Alabama'),
-              ),
               const PopupMenuItem<String>(
                 value: 'hmdb_ger.csv',
                 child: Text('Germany'),
@@ -591,6 +591,226 @@ class _MapPageState extends State<MapPage> {
               const PopupMenuItem<String>(
                 value: 'hmdb_eng.csv',
                 child: Text('England'),
+              ),
+              //USA states below -->
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_arizona.csv',
+                child: Text('Arizona'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_california.csv',
+                child: Text('California'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_connecticut.csv',
+                child: Text('Connecticut'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_delaware.csv',
+                child: Text('Delaware'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_florida.csv',
+                child: Text('Florida'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_hawaii.csv',
+                child: Text('Hawaii'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_idaho.csv',
+                child: Text('Idaho'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_maine.csv',
+                child: Text('Maine'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_massachusetts.csv',
+                child: Text('Massachusetts'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_minnesota.csv',
+                child: Text('Minnesota'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_montana.csv',
+                child: Text('Montana'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_nevada.csv',
+                child: Text('Nevada'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_new-hampshire.csv',
+                child: Text('New Hampshire'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_new-jersey.csv',
+                child: Text('New Jersey'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_new-york.csv',
+                child: Text('New York'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_north-carolina.csv',
+                child: Text('North Carolina'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_oklahoma.csv',
+                child: Text('Oklahoma'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_oregon.csv',
+                child: Text('Oregon'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_pennsylvania.csv',
+                child: Text('Pennsylvania'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_rhode-island.csv',
+                child: Text('Rhode Island'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_south-carolina.csv',
+                child: Text('South Carolina'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_utah.csv',
+                child: Text('Utah'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_vermont.csv',
+                child: Text('Vermont'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_washington.csv',
+                child: Text('Washington'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_west-virginia.csv',
+                child: Text('West Virginia'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_alaska.csv',
+                child: Text('Alaska'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_arkansas.csv',
+                child: Text('Arkansas'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_colorado.csv',
+                child: Text('Colorado'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_illinois.csv',
+                child: Text('Illinois'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_indiana.csv',
+                child: Text('Indiana'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_iowa.csv',
+                child: Text('Iowa'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_kansas.csv',
+                child: Text('Kansas'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_kentucky.csv',
+                child: Text('Kentucky'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_louisiana.csv',
+                child: Text('Louisiana'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_maryland.csv',
+                child: Text('Maryland'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_michigan.csv',
+                child: Text('Michigan'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_mississippi.csv',
+                child: Text('Mississippi'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_missouri.csv',
+                child: Text('Missouri'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_nebraska.csv',
+                child: Text('Nebraska'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_new-mexico.csv',
+                child: Text('New Mexico'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_north-dakota.csv',
+                child: Text('North Dakota'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_south-dakota.csv',
+                child: Text('South Dakota'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_texas.csv',
+                child: Text('Texas'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_virginia.csv',
+                child: Text('Virginia'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_wisconsin.csv',
+                child: Text('Wisconsin'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_wyoming.csv',
+                child: Text('Wyoming'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_alabama.csv',
+                child: Text('Alabama'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_georgia.csv',
+                child: Text('Georgia'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_tennessee.csv',
+                child: Text('Tennessee'),
+              ),
+
+              //speshul little pookie
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_district-of-colombia.csv',
+                child: Text('District of Colombia'),
+              ),
+              // territories
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_puerto-rico.csv',
+                child: Text('Puerto Rico'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_virgin-islands.csv',
+                child: Text('Virgin Islands'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_guam.csv',
+                child: Text('Guam'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'hmdb_usa_amer-samoa.csv',
+                child: Text('American Samoa'),
               ),
             ],
           ),
@@ -614,7 +834,8 @@ class _MapPageState extends State<MapPage> {
               // Add map event listener to update markers when map interaction stops
               onMapEvent: (event) {
                 // Only process events when map interaction ends
-                if (event is MapEventMoveEnd || event is MapEventFlingAnimationEnd ||
+                if (event is MapEventMoveEnd ||
+                    event is MapEventFlingAnimationEnd ||
                     event is MapEventDoubleTapZoomEnd) {
                   _onMapMoved(event.camera.center);
                 }
@@ -692,7 +913,8 @@ class _MapPageState extends State<MapPage> {
             child: MapExplorerTarget(
               onDrop: (LatLng screenPosition) {
                 // Convert screen position to map coordinates
-                final mapPosition = mapController.camera.pointToLatLng(Point(screenPosition.longitude, screenPosition.latitude));
+                final mapPosition = mapController.camera.pointToLatLng(
+                    Point(screenPosition.longitude, screenPosition.latitude));
 
                 // Always proceed since pointToLatLng always returns a non-null value
                 // Update position to the dropped location
@@ -711,11 +933,14 @@ class _MapPageState extends State<MapPage> {
 
                 // Show a message
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Exploring area at ${mapPosition.latitude.toStringAsFixed(4)}, ${mapPosition.longitude.toStringAsFixed(4)}')),
+                  SnackBar(
+                      content: Text(
+                          'Exploring area at ${mapPosition.latitude.toStringAsFixed(4)}, ${mapPosition.longitude.toStringAsFixed(4)}')),
                 );
 
                 // Zoom in to the dropped location for a better view of the city
-                mapController.move(mapPosition, 12.0); // Zoom level 12 is good for cities
+                mapController.move(
+                    mapPosition, 12.0); // Zoom level 12 is good for cities
 
                 // Load markers for the new location
                 _loadCSV();
@@ -756,42 +981,52 @@ class _MapPageState extends State<MapPage> {
               ),
             ),
           FloatingActionButton.small(
-            onPressed: _isLoadingMarkers ? null : () {
-              // Update position to current map center before reloading
-              final currentCenter = mapController.camera.center;
-              _position = Position(
-                latitude: currentCenter.latitude,
-                longitude: currentCenter.longitude,
-                timestamp: DateTime.now(),
-                accuracy: 0,
-                altitude: 0,
-                heading: 0,
-                speed: 0,
-                speedAccuracy: 0,
-                altitudeAccuracy: 0,
-                headingAccuracy: 0,
-              );
+            onPressed: _isLoadingMarkers
+                ? null
+                : () {
+                    // Update position to current map center before reloading
+                    final currentCenter = mapController.camera.center;
+                    _position = Position(
+                      latitude: currentCenter.latitude,
+                      longitude: currentCenter.longitude,
+                      timestamp: DateTime.now(),
+                      accuracy: 0,
+                      altitude: 0,
+                      heading: 0,
+                      speed: 0,
+                      speedAccuracy: 0,
+                      altitudeAccuracy: 0,
+                      headingAccuracy: 0,
+                    );
 
-              // Reload markers with the updated position
-              _loadCSV();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Refreshing markers for ${currentCenter.latitude.toStringAsFixed(4)}, ${currentCenter.longitude.toStringAsFixed(4)}')),
-              );
-            },
+                    // Reload markers with the updated position
+                    _loadCSV();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text(
+                              'Refreshing markers for ${currentCenter.latitude.toStringAsFixed(4)}, ${currentCenter.longitude.toStringAsFixed(4)}')),
+                    );
+                  },
             tooltip: 'Refresh markers',
             heroTag: 'refreshMarkers',
             child: _isLoadingMarkers
-              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-              : const Icon(Icons.refresh),
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white))
+                : const Icon(Icons.refresh),
           ),
           const SizedBox(height: 10),
           FloatingActionButton(
-            onPressed: _isLoadingLocation || _isLoadingMarkers ? null : _getCurrentLocation,
+            onPressed: _isLoadingLocation || _isLoadingMarkers
+                ? null
+                : _getCurrentLocation,
             tooltip: 'Get current location',
             heroTag: 'getCurrentLocation',
             child: _isLoadingLocation
-              ? const CircularProgressIndicator(color: Colors.white)
-              : const Icon(Icons.my_location),
+                ? const CircularProgressIndicator(color: Colors.white)
+                : const Icon(Icons.my_location),
           ),
         ],
       ),
@@ -864,8 +1099,6 @@ class MonumentMarkerPopup extends StatelessWidget {
     debugPrint('Launching maps with location: $location');
     MapsLauncher.launchQuery(location);
   }
-
-
 
   Future<void> _launchLink() async {
     if (!await launchUrl(monument.link)) {

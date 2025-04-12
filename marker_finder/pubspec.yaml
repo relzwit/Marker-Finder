@@ -87,10 +87,64 @@ flutter:
   # To add assets to your applicatiyon, add an assets section, like this:
   assets:
     - assets/CSVs/hmdb_ger.csv
-    - assets/CSVs/hmdb_usa_tn.csv
-    - assets/CSVs/hmdb_usa_ala.csv
-    - assets/CSVs/hmdb_usa_ga.csv
     - assets/CSVs/hmdb_eng.csv
+    - assets/CSVs/hmdb_usa_tennessee.csv
+    - assets/CSVs/hmdb_usa_alabama.csv
+    - assets/CSVs/hmdb_usa_georgia.csv
+    - assets/CSVs/hmdb_usa_alaska.csv
+    - assets/CSVs/hmdb_usa_arizona.csv
+    - assets/CSVs/hmdb_usa_arkansas.csv
+    - assets/CSVs/hmdb_usa_california.csv
+    - assets/CSVs/hmdb_usa_colorado.csv
+    - assets/CSVs/hmdb_usa_connecticut.csv
+    - assets/CSVs/hmdb_usa_delaware.csv
+    - assets/CSVs/hmdb_usa_florida.csv
+    - assets/CSVs/hmdb_usa_georgia.csv
+    - assets/CSVs/hmdb_usa_hawaii.csv
+    - assets/CSVs/hmdb_usa_idaho.csv
+    - assets/CSVs/hmdb_usa_illinois.csv
+    - assets/CSVs/hmdb_usa_indiana.csv
+    - assets/CSVs/hmdb_usa_iowa.csv
+    - assets/CSVs/hmdb_usa_kansas.csv
+    - assets/CSVs/hmdb_usa_kentucky.csv
+    - assets/CSVs/hmdb_usa_louisiana.csv
+    - assets/CSVs/hmdb_usa_maine.csv
+    - assets/CSVs/hmdb_usa_maryland.csv
+    - assets/CSVs/hmdb_usa_massachusetts.csv
+    - assets/CSVs/hmdb_usa_michigan.csv
+    - assets/CSVs/hmdb_usa_minnesota.csv
+    - assets/CSVs/hmdb_usa_mississippi.csv
+    - assets/CSVs/hmdb_usa_missouri.csv
+    - assets/CSVs/hmdb_usa_montana.csv
+    - assets/CSVs/hmdb_usa_nebraska.csv
+    - assets/CSVs/hmdb_usa_nevada.csv
+    - assets/CSVs/hmdb_usa_new-hampshire.csv
+    - assets/CSVs/hmdb_usa_new-jersey.csv
+    - assets/CSVs/hmdb_usa_new-mexico.csv
+    - assets/CSVs/hmdb_usa_new-york.csv
+    - assets/CSVs/hmdb_usa_north-carolina.csv
+    - assets/CSVs/hmdb_usa_north-dakota.csv
+    - assets/CSVs/hmdb_usa_ohio.csv
+    - assets/CSVs/hmdb_usa_oklahoma.csv
+    - assets/CSVs/hmdb_usa_oregon.csv
+    - assets/CSVs/hmdb_usa_pennsylvania.csv
+    - assets/CSVs/hmdb_usa_rhode-island.csv
+    - assets/CSVs/hmdb_usa_south-carolina.csv
+    - assets/CSVs/hmdb_usa_south-dakota.csv
+    - assets/CSVs/hmdb_usa_texas.csv
+    - assets/CSVs/hmdb_usa_utah.csv
+    - assets/CSVs/hmdb_usa_vermont.csv
+    - assets/CSVs/hmdb_usa_virginia.csv
+    - assets/CSVs/hmdb_usa_washington.csv
+    - assets/CSVs/hmdb_usa_west-virginia.csv
+    - assets/CSVs/hmdb_usa_wisconsin.csv
+    - assets/CSVs/hmdb_usa_wyoming.csv
+    - assets/CSVs/hmdb_usa_virgin-islands.csv
+    - assets/CSVs/hmdb_usa_puerto-rico.csv
+    - assets/CSVs/hmdb_usa_guam.csv
+    - assets/CSVs/hmdb_usa_district-of-columbia.csv
+    - assets/CSVs/hmdb_usa_amer-samoa.csv
+
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
