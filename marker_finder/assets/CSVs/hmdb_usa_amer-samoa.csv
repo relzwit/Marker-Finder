@@ -1,0 +1,4 @@
+﻿MarkerID,Marker No.,Title,Subtitle,Add'l Subtitle,Year Erected,Erected By,Latitude (minus=S),Longitude (minus=W),Street Address,City or Town,Section or Quarter,County or Parish,State or Prov.,Location,Missing,Link,First Published,Last Update
+184698,,"Blunts Point Naval Gun Site",,,1987,,-14.28545,-170.67707,,"Utulei",,"Ma&#699;op&#363;tasi County","American Samoa","It can be reached from American Samoa Route 001. ",,https://www.hmdb.org/m.asp?m=184698,10/27/2021,4/10/2022
+185282,,"Vai'ava Strait",,,,,-14.24085,-170.67124,,"Vatia",,"Vaifanua County","American Samoa","It can be reached from American Samoa Route 006. ",,https://www.hmdb.org/m.asp?m=185282,11/8/2021,4/10/2022
+,Source: Hmdb.org,Character encoding: utf-8 with BOM,Comma-separated file double-quote delimited with header row. Double-quoted columns can contain  HTML <tag>s and HTML entity escape sequences like &dollar; and &36;. Dates are in USA format.
