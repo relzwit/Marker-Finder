@@ -15,7 +15,7 @@ features for presentation:
 
 - popup inscription scraped from website - UNFINISHED
 - popup picture scraped from the hmdb link - UNFINISHED
-- gamification in the form of points for each marker adding to a user level - UNFINISHED
+- gamification in the fm of points for each marker adding to a user level - UNFINISHED
 - persistency possible with a web app? - UNFINISHED
 - switch to the web version of `FlutterMap()` - UNFINISHED
 - marker clustering for improved performance - UNFINISHED
