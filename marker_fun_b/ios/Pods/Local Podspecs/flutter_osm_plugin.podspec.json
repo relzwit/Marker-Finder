@@ -1,0 +1,46 @@
+{
+  "name": "flutter_osm_plugin",
+  "version": "0.0.1",
+  "summary": "OSM plugin for flutter apps  Android,iOS,web",
+  "description": "OSM plugin for flutter apps  Android,iOS,web",
+  "homepage": "http://example.com",
+  "license": {
+    "file": "../LICENSE"
+  },
+  "authors": {
+    "Your Company": "email@example.com"
+  },
+  "source": {
+    "path": "."
+  },
+  "source_files": "flutter_osm_plugin/Sources/flutter_osm_plugin/**/*.{h,m,swift}",
+  "resources": [
+    "Assets/**.json"
+  ],
+  "dependencies": {
+    "Flutter": [
+
+    ],
+    "Alamofire": [
+
+    ],
+    "Polyline": [
+
+    ],
+    "Yams": [
+
+    ],
+    "OSMFlutterFramework": [
+
+    ]
+  },
+  "platforms": {
+    "ios": "13.0"
+  },
+  "pod_target_xcconfig": {
+    "DEFINES_MODULE": "YES",
+    "VALID_ARCHS[sdk=iphonesimulator*]": "i386"
+  },
+  "swift_versions": "5.0",
+  "swift_version": "5.0"
+}
